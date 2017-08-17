@@ -1,0 +1,37 @@
+{
+  "name": "faparser",
+  "version": "1.0.0",
+  "description": "Parser for Filmaffinity site",
+  "main": "faparser.js",
+  "scripts": {
+    "test": "\"\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aespinilla/faparser.git"
+  },
+  "keywords": [
+    "filmaffinity",
+    "cinema",
+    "scrapper",
+    "spider",
+    "node",
+    "nodejs",
+    "javascript",
+    "npm",
+    "crawler",
+    "series",
+    "film"
+  ],
+  "author": "Alberto Espinilla",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aespinilla/faparser/issues"
+  },
+  "homepage": "https://github.com/aespinilla/faparser#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "promise": "^8.0.1",
+    "request": "^2.81.0"
+  }
+}
