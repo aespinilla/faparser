@@ -58,37 +58,6 @@ function rPromise(data){
     })
 }
 
-
-function r(data, callback){
-    var url = computedUrl(data)
-    request(url, function(error, response, body) {
-        if (!error && response.statusCode == 200) {
-            var e = hasError(body)
-            if (e.error == true) {
-                return callback({
-                    code: 1,
-                    msg: e.msg
-                },
-                    {
-                        url:url,
-                        response: response
-                    })
-            }
-            return callback(null, {
-                url:url,
-                response: response,
-                body:body})
-        }else{
-            return callback({
-                code: 10,
-                msg: 'Could not connect url: '+url
-            }, {
-                url:url
-            })
-        }
-    })
-}
-
 function hasError(body){
     if (jQuery(body).find('h1').text() === 'Not Found') {
         return {
@@ -111,7 +80,7 @@ function hasError(body){
 
 function computedUrl(data) {
     if (data.isFilm == true){
-        return BASE_URL + '/'+data.lang+'/film' + data.idfilm + '.html'
+        return BASE_URL + '/'+data.lang+'/film' + data.id + '.html'
     }
     var lang = data.lang ? data.lang : 'es'
     var type = data.type && (searchTypes.hasOwnProperty(data.type)) ? data.type : searchTypes.TITLE
@@ -124,7 +93,7 @@ function computedUrl(data) {
     }else if (type == 'GENRE' || type == 'TOPIC'){
         computedUrl = computedUrl+searchTypes[type]+query+'&attr=rat_count&nodoc'
     }else if (type === 'IMAGES' ||type === 'TRAILERS'){
-        computedUrl = computedUrl+searchTypes[type]+data.idfilm
+        computedUrl = computedUrl+searchTypes[type]+data.id
     }else{
         computedUrl = computedUrl+'/search.php?stype='+searchTypes[type]
         computedUrl = computedUrl+'&stext='+encodeURIComponent(query)+'&from='+start+'&orderby=year'
