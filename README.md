@@ -1,6 +1,10 @@
 # FAparser
 Npm library for parse films info from Filmaffinity
 
+## Try or use the REST API
+
+[FARest API](https://github.com/aespinilla/FARest-API) - REST API for Filmaffinity
+
 ## Getting Started
 Install npm dependency
 
