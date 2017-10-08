@@ -1,5 +1,5 @@
 # FAparser
-Npm library for parse film info from Filmaffinity
+Npm library for parse films info from Filmaffinity
 
 ## Getting Started
 Install npm dependency
@@ -54,8 +54,8 @@ faparser.search({query:'spiderman',lang:'es',type: faparser.TITLE, start:0}).the
 })
 ```
 
-##Extra
+## Extra
 Each actor, director or genre contains a request object. This object can send to **faparser.search** for get results.
 
-##Author
+## Author
 * Alberto Espinilla
