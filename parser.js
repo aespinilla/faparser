@@ -60,7 +60,8 @@ exports.parseFilm = function(data){
                     }
                     break
                 }
-                case "director":{
+                case "director":
+                case "dirección":{
                     film.directors = []
                     jQuery(a).next().find('a').each(function (index2, directors) {
                         film.directors.push({
