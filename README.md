@@ -21,15 +21,15 @@ There are three methods which will response a promise with an object or an array
 var faparser = require('faparser')
 ```
 
-### faparser.film( object ) 
+### faparser.film( object )
 
 Return a promise with a film full data object (with images and films) or error if have one
 
 ```
-faparser.film({ idfilm: 908768, lang: 'es''}).then(function(film){ 
-    console.log(film) 
-}).catch(function(e){ 
-    console.log(e) 
+faparser.film({ id: 908768, lang: 'es''}).then(function(film){
+    console.log(film)
+}).catch(function(e){
+    console.log(e)
 })
 
 ```

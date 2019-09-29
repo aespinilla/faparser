@@ -13,12 +13,13 @@ var BASE_URL = "http://www.filmaffinity.com"
 
 var searchTypes =  {
     TITLE : "title",
-        CAST : "cast",
-        DIRECTOR : "director",
-        GENRE : "/moviegenre.php?genre=",
-        TOPIC : "/movietopic.php?topic=",
-        IMAGES : "/filmimages.php?movie_id=",
-        TRAILERS : "/evideos.php?movie_id="
+    CAST : "cast",
+    DIRECTOR : "director",
+    GENRE : "/moviegenre.php?genre=",
+    TOPIC : "/movietopic.php?topic=",
+    IMAGES : "/filmimages.php?movie_id=",
+    TRAILERS : "/evideos.php?movie_id=",
+    PRO_REVIEWS : "/pro-reviews.php?movie-id=",
 }
 
 function rPromise(data){
@@ -90,9 +91,9 @@ function computedUrl(data) {
     if (type === 'CAST' || type === 'DIRECTOR'){
         computedUrl = computedUrl+'/search.php?stype='+searchTypes[type]+'&sn'
         computedUrl = computedUrl+'&stext='+encodeURIComponent(query)+'&from='+start+'&orderby=year'
-    }else if (type == 'GENRE' || type == 'TOPIC'){
+    }else if (type === 'GENRE' || type === 'TOPIC'){
         computedUrl = computedUrl+searchTypes[type]+query+'&attr=rat_count&nodoc'
-    }else if (type === 'IMAGES' ||type === 'TRAILERS'){
+    }else if (type === 'IMAGES' ||type === 'TRAILERS' || type === 'PRO_REVIEWS'){
         computedUrl = computedUrl+searchTypes[type]+data.id
     }else{
         computedUrl = computedUrl+'/search.php?stype='+searchTypes[type]
