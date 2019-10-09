@@ -22,7 +22,7 @@ exports.parseFilm = function(data){
         film.imageUrlMed = imageUrlMed
         film.rating = content.find('#movie-rat-avg').attr('content');
         film.votes = content.find('#movie-count-rat').find('span').attr('content')
-        film.title = content.find('#main-title').find('span').text();
+        film.title = content.find('#main-title').find('span').text().trim();
         content.find('.movie-info dt').each(function (index, a) {
             var bind = jQuery(a).text().trim().toLowerCase();
             switch (bind) {
@@ -200,8 +200,9 @@ exports.parseSearch = function(data){
         content.find('.se-it').each(function (index, a) {
             var filmview = {};
             var relUrl = jQuery(a).find('.mc-title').find('a').attr('href');
-            filmview.id = relUrl.substring(relUrl.indexOf('/film') + '/film'.length, relUrl.indexOf('.'));
-            filmview.url = BASE_URL + relUrl;
+            var idMatch = relUrl.match( /.*\/film(\d*)/ );
+            filmview.id = idMatch !== null ? idMatch[1] : "";
+            filmview.url = relUrl;
             filmview.country = {
                 imgCountry: BASE_URL+jQuery(a).find('.mc-title').find('img').attr('src'),
                 country: jQuery(a).find('.mc-title').find('img').attr('title')
@@ -215,7 +216,7 @@ exports.parseSearch = function(data){
                 thumbnail = BASE_URL+thumbnail
             }
             filmview.thumbnail = thumbnail
-            filmview.title = jQuery(a).find('.mc-title').find('a').attr('title');
+            filmview.title = jQuery(a).find('.mc-title').find('a').attr('title').trim();
             filmview.directors = [];
             jQuery(a).find('.mc-director').find('.credits').find('a').each(function (index, b) {
                 filmview.directors.push({
@@ -241,7 +242,7 @@ exports.parseSearch = function(data){
 
             })
             filmview.rating = jQuery(a).find('.avgrat-box').text()
-            filmview.votes = jQuery(a).find('.ratcount-box').text()
+            filmview.votes = jQuery(a).find('.ratcount-box').text().trim()
             films.push(filmview);
         })
         if (content.find('.see-all-button').length){
@@ -294,6 +295,36 @@ exports.parseImages = function(data){
     return items
 }
 
+exports.parseProReviews = function( data ) {
+    try {
+        var reviews = [];
+        jQuery( data.body ).find( '.wrap>table>tbody>tr' ).each( function( index, element ) {
+            var elHtml = jQuery( element )
+            var review = {};
+            var contryHtml = elHtml.find( '.c>img' )
+            review.country = {
+                imgCountry: BASE_URL + contryHtml.attr( 'src' ),
+                country: contryHtml.attr( 'title' )
+            };
+            review.gender = elHtml.find( '.gender>span' ).text().trim();
+            var authorHtml = elHtml.find( '.author' );
+            review.author = authorHtml.find( 'div' ).text().trim();
+            review.source = authorHtml.find( 'strong' ).text().trim(); // This is for Filmaffinity review
+            review.source = review.source === "" ? authorHtml.find( 'em' ).text().trim() : review.source;
+            review.text = elHtml.find( '.text' ).text().trim().replace( /"/g, '' );
+            review.url = elHtml.find( '.text>a' ).attr( 'href' );
+            review.bias = elHtml.find( '.fas.fa-circle' ).parent().find( 'span' ).text().trim();
+            reviews.push( review );
+        } );
+
+        return reviews;
+    }
+    catch( err ) {
+        console.log( err )
+    }
+    return [];
+}
+
 function parseSpecialSearch(data){
     try {
         var films = []
@@ -304,7 +335,7 @@ function parseSpecialSearch(data){
             f.thumbnail = elHtml.find('.mc-poster img').attr('src')
             var titleHtml = elHtml.find('.mc-title')
             f.url = BASE_URL+elHtml.find('a').attr('href')
-            f.title = titleHtml.find('a').attr('title')
+            f.title = titleHtml.find('a').attr('title').trim()
             f.country = {
                 imgCountry: BASE_URL+titleHtml.find('img').attr('src'),
                 country: titleHtml.find('img').attr('title')

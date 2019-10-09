@@ -86,13 +86,17 @@ function filmTaskPromise(data){
         var i = clone(data)
         i.isFilm = false
         i.type = 'IMAGES'
+        var r = clone(data)
+        r.isFilm = false
+        r.type = 'PRO_REVIEWS'
 
-        Promise.all([requestfa.FArequest(f), requestfa.FArequest(i), requestfa.FArequest(t)])
+        Promise.all([requestfa.FArequest(f), requestfa.FArequest(i), requestfa.FArequest(t), requestfa.FArequest(r)])
             .then(function(result){
                 var film = parser.parseFilm(result[0])
                 film.id = data.id
                 film.images = parser.parseImages(result[1])
                 film.trailers = parser.parseTrailers(result[2])
+                film.proReviews = parser.parseProReviews(result[3])
                 return resolve(film)
             }).catch(function(error){
                 return reject(error)
