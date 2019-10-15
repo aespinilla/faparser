@@ -1,0 +1,32 @@
+image: docker:stable
+
+stages:
+  - deploy
+
+deploy:npm:
+  stage: deploy
+  tags:
+    - docker-in-docker
+  only:
+    - tags
+  script:
+    - pwd
+
+deploy:nexus:
+  stage: deploy
+  tags:
+    - docker-in-docker
+  only:
+    - tags
+  script:
+    # - echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USER" --password-stdin
+    - pwd
+
+deploy:nexus:develop:
+  stage: deploy
+  tags:
+    - docker-in-docker
+  only:
+    - gitlab-ci
+  script:
+    - pwd
