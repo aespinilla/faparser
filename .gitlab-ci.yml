@@ -1,7 +1,13 @@
-image: docker:stable
+image: node:latest
 
 stages:
+  - release
   - deploy
+
+before_script:
+  - echo "$GITHUB_TOKEN"
+  - export GITHUB_TOKEN="$GITHUB_TOKEN"
+  - npm install -g github-release-cli
 
 deploy:npm:
   stage: deploy
@@ -10,23 +16,22 @@ deploy:npm:
   only:
     - tags
   script:
-    - pwd
+    - echo "$NPM_TOKEN"
+    - npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+    - npm publish --verbose
 
-deploy:nexus:
-  stage: deploy
+release:github:
+  stage: release
   tags:
     - docker-in-docker
   only:
     - tags
   script:
-    # - echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USER" --password-stdin
-    - pwd
-
-deploy:nexus:develop:
-  stage: deploy
-  tags:
-    - docker-in-docker
-  only:
-    - gitlab-ci
-  script:
-    - pwd
+    - echo "$CI_COMMIT_TAG"
+    - echo "$GITHUB_USER"
+    - github-release upload \
+      --owner="$GITHUB_USER" \
+      --repo=faparser \
+      --tag="$CI_COMMIT_TAG" \
+      --name="$CI_COMMIT_TAG" \
+      --body="Release \"$CI_COMMIT_TAG\""
