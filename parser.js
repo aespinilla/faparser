@@ -159,10 +159,9 @@ exports.parseFilm = function (data) {
 }
 
 exports.parseSearch = function (data) {
-    var pathname = url.parse(data.response.request.uri.href).pathname;
+    const pathname = url.parse(data.response.request.uri.href).pathname;
     if (pathname.includes('film')) {
         const idtemp = pathname.substring(pathname.indexOf('film') + 'film'.length, pathname.indexOf('.'));
-        //console.log(pathname)
         data.response.lang = data.lang
         const film = exports.parseFilm(data.response)
         return {
@@ -340,7 +339,7 @@ function parseSpecialSearch(data) {
             f.year = titleHtml.text().substring(f.title.length + 2).replace(")", "").trim()
             f.directors = []
             elHtml.find('.mc-director .credits a').each(function (index, elDir) {
-                var item = jQuery(elDir)
+                const item = jQuery(elDir)
                 f.directors.push({
                     name: item.attr('title'),
                     request: {
@@ -353,7 +352,7 @@ function parseSpecialSearch(data) {
             })
             f.cast = []
             elHtml.find('.mc-cast .credits a').each(function (index, elCast) {
-                var item = jQuery(elCast)
+                const item = jQuery(elCast)
                 f.cast.push({
                     name: item.attr('title'),
                     request: {
