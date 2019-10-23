@@ -27,56 +27,23 @@ function rPromise(data) {
         const url = computedUrl(data)
         request(url, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                const e = hasError(body)
-                if (e.error == true) {
-                    reject({
-                            code: 1,
-                            msg: e.msg
-                        },
-                        {
-                            url: url,
-                            response: response
-                        })
-                } else {
-                    resolve({
-                        url: url,
-                        response: response,
-                        type: data.type,
-                        isFilm: data.isFilm,
-                        lang: data.lang,
-                        body: body
-                    })
-                }
+                resolve({
+                    url: url,
+                    response: response,
+                    type: data.type,
+                    isFilm: data.isFilm,
+                    lang: data.lang,
+                    body: body
+                })
             } else {
                 reject({
-                    code: 10,
-                    msg: 'Could not connect url: ' + url
-                }, {
-                    url: url
+                    statusCode: response.statusCode,
+                    url: url,
+                    error: response.error
                 })
             }
         })
     })
-}
-
-function hasError(body) {
-    if (jQuery(body).find('h1').text() === 'Not Found') {
-        return {
-            error: true,
-            msg: 'Not Found'
-        }
-    }
-    if (body === 'No Movie') {
-        return {
-            error: true,
-            msg: 'No Movie'
-        }
-    }
-
-    return {
-        error: false,
-        msg: null
-    }
 }
 
 function computedUrl(data) {
