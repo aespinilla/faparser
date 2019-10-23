@@ -4,7 +4,7 @@
 const jQuery = require('cheerio')
 const url = require('url')
 
-const exports = module.exports = {}
+var exports = module.exports = {}
 
 const BASE_URL = "http://www.filmaffinity.com"
 
