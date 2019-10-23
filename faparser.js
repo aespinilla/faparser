@@ -21,13 +21,10 @@ function search(data) {
             res.lang = data.lang
             res.type = data.type
             const result = parser.parseSearch(res)
-            const diff = new Date().getTime() - now.getTime()
-            console.log('Process time: ' + diff + 'ms succesfully for data: ' + JSON.stringify(data) + ' with result count: ' + result.result.length)
+            log(now, data, result.result)
             return resolve(result)
         }).catch(function (error) {
-            console.log(error)
-            const diff = new Date().getTime() - now.getTime()
-            console.log('Process time: ' + diff + 'ms for data: ' + JSON.stringify(data) + ' with error: ' + error)
+            log(now, data, error)
             return reject(error)
         })
     })
@@ -51,8 +48,7 @@ function preview(data) {
                 rating: data.lang == 'es' && film.rating ? film.rating.replace('.', ',') : film.rating,
                 votes: film.votes
             }
-            const diff = new Date().getTime() - now.getTime()
-            console.log('Process time: ' + diff + 'ms succesfully for preview data: ' + JSON.stringify(data) + ' with film title: ' + film.title)
+            log(now, data, film)
             return resolve(filmResult)
         }).catch(function (e) {
             return reject(e)
@@ -65,13 +61,10 @@ function film(data) {
         const now = new Date()
         data.isFilm = true
         filmTaskPromise(data).then(function (film) {
-            const diff = new Date().getTime() - now.getTime()
-            console.log('Process time: ' + diff + 'ms succesfully for data: ' + JSON.stringify(data) + ' with film title: ' + film.title)
+            log(now, data, film)
             return resolve(film)
         }).catch(function (error) {
-            console.log(error)
-            const diff = new Date().getTime() - now.getTime()
-            console.log('Process time: ' + diff + 'ms for data: ' + JSON.stringify(data) + ' with error: ' + error)
+            log(now, data, error)
             return reject(error)
         })
     })
@@ -106,4 +99,9 @@ function filmTaskPromise(data) {
 
 function clone(o) {
     return JSON.parse(JSON.stringify(o))
+}
+
+function log(now, data, response) {
+    const diff = new Date().getTime() - now.getTime()
+    console.log('Process time: ' + diff + 'ms for request data: ' + JSON.stringify(data) + ' with response: ' + JSON.stringify(response))
 }
