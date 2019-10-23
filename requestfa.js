@@ -37,7 +37,7 @@ function rPromise(data) {
                 })
             } else {
                 reject({
-                    statusCode: response.statusCode,
+                    code: response.statusCode,
                     url: url,
                     error: response.error
                 })

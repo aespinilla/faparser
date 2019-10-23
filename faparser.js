@@ -24,8 +24,11 @@ function search(data) {
             log(now, data, result.result)
             return resolve(result)
         }).catch(function (error) {
-            log(now, data, error)
-            return reject(error)
+            log(now, data, {error: error})
+            return reject({
+                code: error.code,
+                error: error.error
+            })
         })
     })
 }
@@ -45,13 +48,17 @@ function preview(data) {
                 directors: film.directors,
                 cast: film.cast,
                 country: film.country,
-                rating: data.lang == 'es' && film.rating ? film.rating.replace('.', ',') : film.rating,
+                rating: film.rating ? film.rating.replace(',', '.') : 0,
                 votes: film.votes
             }
             log(now, data, film)
             return resolve(filmResult)
-        }).catch(function (e) {
-            return reject(e)
+        }).catch(function (error) {
+            log(now, data, {error: error})
+            return reject({
+                code: error.code,
+                error: error.error
+            })
         })
     })
 }
@@ -64,8 +71,11 @@ function film(data) {
             log(now, data, film)
             return resolve(film)
         }).catch(function (error) {
-            log(now, data, error)
-            return reject(error)
+            log(now, data, {error: error})
+            return reject({
+                code: error.code,
+                error: error.error
+            })
         })
     })
 }
