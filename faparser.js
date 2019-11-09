@@ -113,5 +113,5 @@ function clone(o) {
 
 function log(now, data, response) {
     const diff = new Date().getTime() - now.getTime()
-    console.log('Process time: ' + diff + 'ms for request data: ' + JSON.stringify(data) + ' with response: ' + JSON.stringify(response))
+    console.info('[' + new Date() + '] faparser: ' + 'Process time: ' + diff + 'ms for request data: ' + JSON.stringify(data) + ' with response: ' + JSON.stringify(response))
 }

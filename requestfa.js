@@ -66,6 +66,6 @@ function computedUrl(data) {
         computedUrl = computedUrl + '/search.php?stype=' + searchTypes[type]
         computedUrl = computedUrl + '&stext=' + encodeURIComponent(query) + '&from=' + start + '&orderby=year'
     }
-    console.log('COMPUTED URL: ' + computedUrl)
+    console.info('[' + new Date() + '] faparser: ' + 'Generated URL: ' + computedUrl)
     return computedUrl.toLowerCase()
 }
