@@ -2,7 +2,6 @@
  * Created by aespinilla on 20/6/17.
  */
 const request = require('request')
-const jQuery = require('cheerio')
 const Promise = require('promise')
 
 module.exports = {

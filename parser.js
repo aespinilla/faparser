@@ -4,11 +4,17 @@
 const jQuery = require('cheerio')
 const url = require('url')
 
-var exports = module.exports = {}
-
 const BASE_URL = "http://www.filmaffinity.com"
 
-exports.parseFilm = function (data) {
+module.exports = {
+    parseFilm: parseFilm,
+    parseSearch: parseSearch,
+    parseTrailers: parseTrailers,
+    parseImages: parseImages,
+    parseProReviews: parseProReviews
+}
+
+function parseFilm(data) {
     try {
         const content = jQuery(data.body)
         const film = {}
@@ -158,7 +164,7 @@ exports.parseFilm = function (data) {
     return {}
 }
 
-exports.parseSearch = function (data) {
+function parseSearch(data) {
     const pathname = url.parse(data.response.request.uri.href).pathname;
     if (pathname.includes('film')) {
         const idtemp = pathname.substring(pathname.indexOf('film') + 'film'.length, pathname.indexOf('.'));
@@ -258,7 +264,7 @@ exports.parseSearch = function (data) {
     return []
 }
 
-exports.parseTrailers = function (data) {
+function parseTrailers(data) {
     try {
         const content = jQuery(data.body)
         const trailers = []
@@ -274,7 +280,7 @@ exports.parseTrailers = function (data) {
     return []
 }
 
-exports.parseImages = function (data) {
+function parseImages(data) {
     const items = []
     jQuery(data.body).find('#main-image-wrapper').find('a').each(function (index, item) {
         const href = jQuery(item).attr('href')
@@ -293,7 +299,7 @@ exports.parseImages = function (data) {
     return items
 }
 
-exports.parseProReviews = function (data) {
+function parseProReviews(data) {
     try {
         const reviews = [];
         jQuery(data.body).find('.wrap>table>tbody>tr').each(function (index, element) {
