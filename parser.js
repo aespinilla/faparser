@@ -152,8 +152,8 @@ exports.parseFilm = function (data) {
         })
         return film
     } catch (err) {
-        console.log(err)
-        throw ({code: 4, msg: 'Can not parse film'})
+        console.error(err)
+        //throw ({code: 4, msg: 'Can not parse film'})
     }
     return {}
 }
@@ -253,7 +253,7 @@ exports.parseSearch = function (data) {
         outPut.result = films
         return outPut
     } catch (err) {
-        console.log(err)
+        console.error(err)
     }
     return []
 }
@@ -268,8 +268,8 @@ exports.parseTrailers = function (data) {
         })
         return trailers
     } catch (err) {
-        console.log(err)
-        throw ({code: 4, msg: 'Can not parse film'})
+        console.error(err)
+        //throw ({code: 4, msg: 'Can not parse film'})
     }
     return []
 }
@@ -316,7 +316,7 @@ exports.parseProReviews = function (data) {
         });
         return reviews;
     } catch (err) {
-        console.log(err)
+        console.error(err)
     }
     return [];
 }
@@ -369,7 +369,7 @@ function parseSpecialSearch(data) {
         })
         return films
     } catch (err) {
-        console.log(err)
+        console.error(err)
     }
     return []
 }

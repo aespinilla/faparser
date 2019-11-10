@@ -24,6 +24,7 @@ function search(data) {
             log(now, data, result.result)
             return resolve(result)
         }).catch(function (error) {
+            console.error('[' + new Date() + '] faparser: ' + JSON.stringify(error))
             log(now, data, {error: error})
             return reject({
                 code: error.code,
@@ -54,6 +55,7 @@ function preview(data) {
             log(now, data, film)
             return resolve(filmResult)
         }).catch(function (error) {
+            console.error('[' + new Date() + '] faparser: ' + JSON.stringify(error))
             log(now, data, {error: error})
             return reject({
                 code: error.code,
@@ -71,6 +73,7 @@ function film(data) {
             log(now, data, film)
             return resolve(film)
         }).catch(function (error) {
+            console.error('[' + new Date() + '] faparser: ' + JSON.stringify(error))
             log(now, data, {error: error})
             return reject({
                 code: error.code,
@@ -101,9 +104,7 @@ function filmTaskPromise(data) {
                 film.trailers = parser.parseTrailers(result[2])
                 film.proReviews = parser.parseProReviews(result[3])
                 return resolve(film)
-            }).catch(function (error) {
-            return reject(error)
-        })
+            }).catch(reject)
     })
 }
 
