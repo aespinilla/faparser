@@ -1,22 +1,28 @@
 /**
  * Created by aespinilla on 8/3/17.
  */
-var jQuery = require('cheerio')
-var url = require('url')
+const jQuery = require('cheerio')
+const url = require('url')
 
-var exports = module.exports = {}
+const BASE_URL = "http://www.filmaffinity.com"
 
-var BASE_URL = "http://www.filmaffinity.com"
+module.exports = {
+    parseFilm: parseFilm,
+    parseSearch: parseSearch,
+    parseTrailers: parseTrailers,
+    parseImages: parseImages,
+    parseProReviews: parseProReviews
+}
 
-exports.parseFilm = function(data){
+function parseFilm(data) {
     try {
-        var content = jQuery(data.body)
-        var film = {}
+        const content = jQuery(data.body)
+        const film = {}
         film.url = data.url
         film.imageUrl = content.find('#movie-main-image-container').find('a').attr('href');
-        var imageUrlMed = content.find('#movie-main-image-container').find('img').attr('src');
-        if (imageUrlMed.includes('noimgfull')){
-            imageUrlMed = BASE_URL+imageUrlMed
+        let imageUrlMed = content.find('#movie-main-image-container').find('img').attr('src');
+        if (imageUrlMed.includes('noimgfull')) {
+            imageUrlMed = BASE_URL + imageUrlMed
             film.imageUrl = imageUrlMed
         }
         film.imageUrlMed = imageUrlMed
@@ -24,36 +30,36 @@ exports.parseFilm = function(data){
         film.votes = content.find('#movie-count-rat').find('span').attr('content')
         film.title = content.find('#main-title').find('span').text().trim();
         content.find('.movie-info dt').each(function (index, a) {
-            var bind = jQuery(a).text().trim().toLowerCase();
+            const bind = jQuery(a).text().trim().toLowerCase();
             switch (bind) {
                 case "original title":
-                case "título original":{
-                    var element = jQuery(a)
-                    var tO = element.next().text().trim()
+                case "título original": {
+                    const element = jQuery(a)
+                    const tO = element.next().text().trim()
                     film.titleOrig = tO
-                    var akas = []
-                    content.find('dd.akas li').each(function(index, akatitle){
-                        var ak = jQuery(akatitle).text()
+                    const akas = []
+                    content.find('dd.akas li').each(function (index, akatitle) {
+                        const ak = jQuery(akatitle).text()
                         akas.push(ak)
                     })
-                    if (akas.length != 0){
+                    if (akas.length != 0) {
                         film.akas = akas
-                        film.titleOrig = tO.substring(0, tO.length-3).trim()
+                        film.titleOrig = tO.substring(0, tO.length - 3).trim()
                     }
                     break
                 }
                 case "year":
-                case "año":{
+                case "año": {
                     film.year = jQuery(a).next().text().trim()
                     break
                 }
                 case "running time":
-                case "duración":{
+                case "duración": {
                     film.running = jQuery(a).next().text().trim()
                     break
                 }
                 case "country":
-                case "país":{
+                case "país": {
                     film.country = {
                         imgCountry: BASE_URL + jQuery(a).next().find('img').attr('src'),
                         country: jQuery(a).next().find('img').attr('title'),
@@ -61,7 +67,7 @@ exports.parseFilm = function(data){
                     break
                 }
                 case "director":
-                case "dirección":{
+                case "dirección": {
                     film.directors = []
                     jQuery(a).next().find('a').each(function (index2, directors) {
                         film.directors.push({
@@ -76,7 +82,7 @@ exports.parseFilm = function(data){
                     break
                 }
                 case "screenwriter":
-                case "guión":{
+                case "guión": {
                     film.screenwriter = []
                     jQuery(a).next().find('.nb span').each(function (index2, guion) {
                         film.screenwriter.push(jQuery(guion).text().trim())
@@ -84,7 +90,7 @@ exports.parseFilm = function(data){
                     break
                 }
                 case "music":
-                case "música":{
+                case "música": {
                     film.music = [];
                     jQuery(a).next().find('.nb span').each(function (index3, music) {
                         film.music.push(jQuery(music).text().trim())
@@ -92,7 +98,7 @@ exports.parseFilm = function(data){
                     break
                 }
                 case "cinematography":
-                case "fotografía":{
+                case "fotografía": {
                     film.cinematography = [];
                     jQuery(a).next().find('.nb span').each(function (index3, foto) {
                         film.cinematography.push(jQuery(foto).text().trim())
@@ -100,7 +106,7 @@ exports.parseFilm = function(data){
                     break
                 }
                 case "cast":
-                case "reparto":{
+                case "reparto": {
                     film.cast = [];
                     jQuery(a).next().find('a').find('span').each(function (index3, actor) {
                         film.cast.push({
@@ -115,18 +121,18 @@ exports.parseFilm = function(data){
                     break
                 }
                 case "producer":
-                case "productora":{
+                case "productora": {
                     film.production = jQuery(a).next().find('.nb span').text().trim()
                     break
                 }
                 case "genre":
-                case "género":{
+                case "género": {
                     film.genre = []
                     jQuery(a).next().find('a').each(function (index3, genero) {
-                        var link = jQuery(genero).attr('href')
-                        var g = jQuery(genero).text().trim()
-                        var gnr = url.parse(link, true).query.genre
-                        if (!gnr){
+                        const link = jQuery(genero).attr('href')
+                        const g = jQuery(genero).text().trim()
+                        let gnr = url.parse(link, true).query.genre
+                        if (!gnr) {
                             gnr = url.parse(link, true).query.topic
                         }
                         film.genre.push({
@@ -141,30 +147,29 @@ exports.parseFilm = function(data){
                     break
                 }
                 case "synopsis / plot":
-                case "sinopsis":{
+                case "sinopsis": {
                     film.synopsis = jQuery(a).next().text().trim()
                     break
                 }
-                default:{
+                default: {
                     break
                 }
             }
         })
         return film
     } catch (err) {
-        console.log(err)
-        throw ({code: 4, msg: 'Can not parse film'})
+        console.error(err)
+        //throw ({code: 4, msg: 'Can not parse film'})
     }
     return {}
 }
 
-exports.parseSearch = function(data){
-    var pathname = url.parse(data.response.request.uri.href).pathname;
+function parseSearch(data) {
+    const pathname = url.parse(data.response.request.uri.href).pathname;
     if (pathname.includes('film')) {
-        var idtemp = pathname.substring(pathname.indexOf('film') + 'film'.length, pathname.indexOf('.'));
-        //console.log(pathname)
+        const idtemp = pathname.substring(pathname.indexOf('film') + 'film'.length, pathname.indexOf('.'));
         data.response.lang = data.lang
-        var film  = exports.parseFilm(data.response)
+        const film = exports.parseFilm(data.response)
         return {
             more: false,
             count: 1,
@@ -177,14 +182,14 @@ exports.parseSearch = function(data){
                 directors: film.directors,
                 cast: film.cast,
                 country: film.country,
-                rating: data.lang == 'es' && film.rating?film.rating.replace('.',','):film.rating,
+                rating: data.lang == 'es' && film.rating ? film.rating.replace('.', ',') : film.rating,
                 votes: film.votes
             }]
         }
     }
 
-    if (data.type === 'TOPIC' || data.type === 'GENRE'){
-        var sfilms = parseSpecialSearch({container: jQuery(data.body).find('.title-movies'), lang: data.lang})
+    if (data.type === 'TOPIC' || data.type === 'GENRE') {
+        const sfilms = parseSpecialSearch({container: jQuery(data.body).find('.title-movies'), lang: data.lang})
         return {
             more: false,
             count: sfilms.length,
@@ -193,27 +198,27 @@ exports.parseSearch = function(data){
     }
 
     try {
-        var outPut = {}
-        var films = []
-        var content = jQuery(data.body)
-        var year;
+        const outPut = {}
+        const films = []
+        const content = jQuery(data.body)
+        let year;
         content.find('.se-it').each(function (index, a) {
-            var filmview = {};
-            var relUrl = jQuery(a).find('.mc-title').find('a').attr('href');
-            var idMatch = relUrl.match( /.*\/film(\d*)/ );
+            const filmview = {};
+            const relUrl = jQuery(a).find('.mc-title').find('a').attr('href');
+            const idMatch = relUrl.match(/.*\/film(\d*)/);
             filmview.id = idMatch !== null ? idMatch[1] : "";
             filmview.url = relUrl;
             filmview.country = {
-                imgCountry: BASE_URL+jQuery(a).find('.mc-title').find('img').attr('src'),
+                imgCountry: BASE_URL + jQuery(a).find('.mc-title').find('img').attr('src'),
                 country: jQuery(a).find('.mc-title').find('img').attr('title')
             }
             if (jQuery(a).hasClass('mt')) {
                 year = jQuery(a).find('.ye-w').text();
             }
             filmview.year = year;
-            var thumbnail = jQuery(a).find('.mc-poster').find('img').attr('src');
-            if (thumbnail.includes('noimgfull')){
-                thumbnail = BASE_URL+thumbnail
+            let thumbnail = jQuery(a).find('.mc-poster').find('img').attr('src');
+            if (thumbnail.includes('noimgfull')) {
+                thumbnail = BASE_URL + thumbnail
             }
             filmview.thumbnail = thumbnail
             filmview.title = jQuery(a).find('.mc-title').find('a').attr('title').trim();
@@ -245,48 +250,47 @@ exports.parseSearch = function(data){
             filmview.votes = jQuery(a).find('.ratcount-box').text().trim()
             films.push(filmview);
         })
-        if (content.find('.see-all-button').length){
+        if (content.find('.see-all-button').length) {
             outPut.more = true
-        }else{
+        } else {
             outPut.more = false
         }
-        outPut.count =  films.length
+        outPut.count = films.length
         outPut.result = films
         return outPut
     } catch (err) {
-        console.log(err)
+        console.error(err)
     }
     return []
 }
 
-exports.parseTrailers = function(data){
+function parseTrailers(data) {
     try {
-        var content = jQuery(data.body)
-        var trailers = []
+        const content = jQuery(data.body)
+        const trailers = []
         content.find('iframe').each(function (index, data) {
-            var urlt = jQuery(data).attr('src')
-            //console.log(urlt);
+            const urlt = jQuery(data).attr('src')
             trailers.push(urlt);
         })
         return trailers
     } catch (err) {
-        console.log(err)
-        throw ({code: 4, msg: 'Can not parse film'})
+        console.error(err)
+        //throw ({code: 4, msg: 'Can not parse film'})
     }
     return []
 }
 
-exports.parseImages = function(data){
-    var items = []
-    jQuery(data.body).find('#main-image-wrapper').find('a').each(function(index, item){
-        var href = jQuery(item).attr('href')
-        if (href.indexOf('.jpg') != -1){
-            var item = {
-                large:href
+function parseImages(data) {
+    const items = []
+    jQuery(data.body).find('#main-image-wrapper').find('a').each(function (index, item) {
+        const href = jQuery(item).attr('href')
+        if (href.indexOf('.jpg') != -1) {
+            const item = {
+                large: href
             }
             if (href.indexOf('large') != -1) {
-                item.thumbnail = href.replace("large","s200")
-            }else{
+                item.thumbnail = href.replace("large", "s200")
+            } else {
                 item.thumbnail = href
             }
             items.push(item)
@@ -295,55 +299,53 @@ exports.parseImages = function(data){
     return items
 }
 
-exports.parseProReviews = function( data ) {
+function parseProReviews(data) {
     try {
-        var reviews = [];
-        jQuery( data.body ).find( '.wrap>table>tbody>tr' ).each( function( index, element ) {
-            var elHtml = jQuery( element )
-            var review = {};
-            var contryHtml = elHtml.find( '.c>img' )
+        const reviews = [];
+        jQuery(data.body).find('.wrap>table>tbody>tr').each(function (index, element) {
+            const elHtml = jQuery(element)
+            const review = {};
+            const contryHtml = elHtml.find('.c>img')
             review.country = {
-                imgCountry: BASE_URL + contryHtml.attr( 'src' ),
-                country: contryHtml.attr( 'title' )
+                imgCountry: BASE_URL + contryHtml.attr('src'),
+                country: contryHtml.attr('title')
             };
-            review.gender = elHtml.find( '.gender>span' ).text().trim();
-            var authorHtml = elHtml.find( '.author' );
-            review.author = authorHtml.find( 'div' ).text().trim();
-            review.source = authorHtml.find( 'strong' ).text().trim(); // This is for Filmaffinity review
-            review.source = review.source === "" ? authorHtml.find( 'em' ).text().trim() : review.source;
-            review.text = elHtml.find( '.text' ).text().trim().replace( /"/g, '' );
-            review.url = elHtml.find( '.text>a' ).attr( 'href' );
-            review.bias = elHtml.find( '.fas.fa-circle' ).parent().find( 'span' ).text().trim();
-            reviews.push( review );
-        } );
-
+            review.gender = elHtml.find('.gender>span').text().trim();
+            const authorHtml = elHtml.find('.author');
+            review.author = authorHtml.find('div').text().trim();
+            review.source = authorHtml.find('strong').text().trim(); // This is for Filmaffinity review
+            review.source = review.source === "" ? authorHtml.find('em').text().trim() : review.source;
+            review.text = elHtml.find('.text').text().trim().replace(/"/g, '');
+            review.url = elHtml.find('.text>a').attr('href');
+            review.bias = elHtml.find('.fas.fa-circle').parent().find('span').text().trim();
+            reviews.push(review);
+        });
         return reviews;
-    }
-    catch( err ) {
-        console.log( err )
+    } catch (err) {
+        console.error(err)
     }
     return [];
 }
 
-function parseSpecialSearch(data){
+function parseSpecialSearch(data) {
     try {
-        var films = []
+        const films = []
         data.container.find('.record').each(function (index, element) {
-            var elHtml = jQuery(element)
-            var f = {}
+            const elHtml = jQuery(element)
+            const f = {}
             f.id = elHtml.find('.movie-card').attr('data-movie-id')
             f.thumbnail = elHtml.find('.mc-poster img').attr('src')
-            var titleHtml = elHtml.find('.mc-title')
-            f.url = BASE_URL+elHtml.find('a').attr('href')
+            const titleHtml = elHtml.find('.mc-title')
+            f.url = BASE_URL + elHtml.find('a').attr('href')
             f.title = titleHtml.find('a').attr('title').trim()
             f.country = {
-                imgCountry: BASE_URL+titleHtml.find('img').attr('src'),
+                imgCountry: BASE_URL + titleHtml.find('img').attr('src'),
                 country: titleHtml.find('img').attr('title')
             }
-            f.year = titleHtml.text().substring(f.title.length+2).replace(")", "").trim()
+            f.year = titleHtml.text().substring(f.title.length + 2).replace(")", "").trim()
             f.directors = []
-            elHtml.find('.mc-director .credits a').each(function(index, elDir){
-                var item = jQuery(elDir)
+            elHtml.find('.mc-director .credits a').each(function (index, elDir) {
+                const item = jQuery(elDir)
                 f.directors.push({
                     name: item.attr('title'),
                     request: {
@@ -355,8 +357,8 @@ function parseSpecialSearch(data){
 
             })
             f.cast = []
-            elHtml.find('.mc-cast .credits a').each(function(index, elCast){
-                var item = jQuery(elCast)
+            elHtml.find('.mc-cast .credits a').each(function (index, elCast) {
+                const item = jQuery(elCast)
                 f.cast.push({
                     name: item.attr('title'),
                     request: {
@@ -372,8 +374,8 @@ function parseSpecialSearch(data){
             films.push(f)
         })
         return films
-    }catch (err){
-        console.log(err)
+    } catch (err) {
+        console.error(err)
     }
     return []
 }
