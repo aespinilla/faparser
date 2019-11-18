@@ -17,6 +17,7 @@ function search(data) {
     return new Promise(function (resolve, reject) {
         const now = new Date()
         data.isFilm = false
+        data.type = data.type || 'TITLE'
         requestfa.FArequest(data).then(function (res) {
             res.lang = data.lang
             res.type = data.type
