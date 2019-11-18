@@ -1,6 +1,6 @@
 {
   "name": "faparser",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Parser for Filmaffinity site",
   "main": "faparser.js",
   "scripts": {
