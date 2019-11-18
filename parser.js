@@ -167,14 +167,14 @@ function parseFilm(data) {
 function parseSearch(data) {
     const pathname = url.parse(data.response.request.uri.href).pathname;
     if (pathname.includes('film')) {
-        const idtemp = pathname.substring(pathname.indexOf('film') + 'film'.length, pathname.indexOf('.'));
+        const idTemp = pathname.substring(pathname.indexOf('film') + 'film'.length, pathname.indexOf('.'));
         data.response.lang = data.lang
-        const film = exports.parseFilm(data.response)
+        const film = parseFilm(data.response)
         return {
             more: false,
             count: 1,
             result: [{
-                id: idtemp,
+                id: idTemp,
                 url: data.response.request.uri.href,
                 thumbnail: film.imageUrlMed.replace("mmed", "msmall"),
                 year: film.year,
