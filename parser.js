@@ -156,7 +156,35 @@ function parseFilm(data) {
                 }
             }
         })
+
+        film.streamingPlatforms = {
+            subscription : [],
+            buy          : [],
+            rent         : []
+        }
+        content.find( '#stream-wrapper > .body > .sub-title' ).each( function( _, streamingTitle ) {
+
+            let providers
+            const streamingType = jQuery( streamingTitle ).text().trim().toLowerCase()
+            switch( streamingType ) {
+                case 'suscripción' : providers = film.streamingPlatforms.subscription; break;
+                case 'compra'      : providers = film.streamingPlatforms.buy;          break;
+                case 'alquiler'    : providers = film.streamingPlatforms.rent;         break;
+                default:
+                    console.warn( 'Streaming type not controlled: ', streamingType );
+                    return;
+            }
+
+            jQuery( streamingTitle ).next().find( 'a' ).each( function( _, providerNode ) {
+                const url      = jQuery( providerNode ).attr( 'href' )
+                const provider = jQuery( providerNode ).find( 'img' ).attr( 'alt' ).trim()
+                providers.push( { url, provider } )
+            } )
+
+        });
+
         return film
+
     } catch (err) {
         console.error(err)
         //throw ({code: 4, msg: 'Can not parse film'})
