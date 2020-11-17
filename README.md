@@ -26,7 +26,7 @@ var faparser = require('faparser')
 Return a promise with a film full data object (with images and films) or error if have one
 
 ```
-faparser.film({ id: 908768, lang: 'es''}).then(function(film){
+faparser.film({ id: 908768, lang: 'es'}).then(function(film){
     console.log(film)
 }).catch(function(e){
     console.log(e)
