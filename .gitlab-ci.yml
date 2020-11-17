@@ -24,5 +24,5 @@ release:github:
   only:
     - tags
   script:
-    - npm install -g github-release-cli
+    - npm install -g github-release-cli@1.3.1
     - github-release upload --owner="$GITHUB_USER" --repo=faparser --tag="$CI_COMMIT_TAG" --name="$CI_COMMIT_TAG" --body="Release $CI_COMMIT_TAG"
