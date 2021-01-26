@@ -1,6 +1,6 @@
 {
   "name": "faparser",
-  "version": "1.0.8",
+  "version": "1.0.8.1",
   "description": "Parser for Filmaffinity site",
   "main": "faparser.js",
   "scripts": {
@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/aespinilla/faparser#readme",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.2",
+    "cheerio": "1.0.0-rc.2",
     "promise": "^8.0.1",
     "request": "^2.83.0"
   }
