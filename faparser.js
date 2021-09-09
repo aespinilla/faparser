@@ -1,6 +1,5 @@
 const parser = require('./parser')
 const requestfa = require('./requestfa')
-const Promise = require('promise')
 
 module.exports = {
     film: film,

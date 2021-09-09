@@ -1,14 +1,13 @@
 /**
  * Created by aespinilla on 20/6/17.
  */
-const request = require('request')
-const Promise = require('promise')
+const bent = require('bent')
 
 module.exports = {
-    FArequest: rPromise
+    FArequest: requestServer
 }
 
-const BASE_URL = "http://www.filmaffinity.com"
+const BASE_URL = "https://www.filmaffinity.com"
 
 const searchTypes = {
     TITLE: "title",
@@ -21,28 +20,26 @@ const searchTypes = {
     PRO_REVIEWS: "/pro-reviews.php?movie-id=",
 }
 
-function rPromise(data) {
-    return new Promise(function (resolve, reject) {
-        const url = computedUrl(data)
-        request(url, function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                resolve({
-                    url: url,
-                    response: response,
-                    type: data.type,
-                    isFilm: data.isFilm,
-                    lang: data.lang,
-                    body: body
-                })
-            } else {
-                reject({
-                    code: response.statusCode,
-                    url: url,
-                    error: response.error
-                })
-            }
-        })
-    })
+async function requestServer(data) {
+    const url = computedUrl(data)
+    const get = bent(url)
+    try {
+        let getResult = await get()
+        const body = await getResult.text()
+        return {
+            url: url,
+            type: data.type,
+            isFilm: data.isFilm,
+            lang: data.lang,
+            body: body
+        }
+    } catch (error) {
+        throw {
+            code: error.statusCode,
+            url: url,
+            error: error.message
+        }
+    }
 }
 
 function computedUrl(data) {
@@ -66,6 +63,6 @@ function computedUrl(data) {
         computedUrl = computedUrl + '/search.php?stype=' + searchTypes[type]
         computedUrl = computedUrl + '&stext=' + encodeURIComponent(query) + '&from=' + start + orderBy
     }
-    console.info('[' + new Date() + '] faparser: ' + 'Generated URL: ' + computedUrl)
+    //console.info('[' + new Date() + '] faparser: ' + 'Generated URL: ' + computedUrl)
     return computedUrl.toLowerCase()
 }

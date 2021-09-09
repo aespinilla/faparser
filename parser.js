@@ -4,7 +4,7 @@
 const jQuery = require('cheerio')
 const url = require('url')
 
-const BASE_URL = "http://www.filmaffinity.com"
+const BASE_URL = "https://www.filmaffinity.com"
 
 module.exports = {
     parseFilm: parseFilm,
@@ -193,7 +193,7 @@ function parseFilm(data) {
 }
 
 function parseSearch(data) {
-    const pathname = url.parse(data.response.request.uri.href).pathname;
+    const pathname = url.parse(data.url).pathname;
     if (pathname.includes('film')) {
         const idTemp = pathname.substring(pathname.indexOf('film') + 'film'.length, pathname.indexOf('.'));
         data.response.lang = data.lang
@@ -203,7 +203,7 @@ function parseSearch(data) {
             count: 1,
             result: [{
                 id: idTemp,
-                url: data.response.request.uri.href,
+                url: data.url,
                 thumbnail: film.imageUrlMed.replace("mmed", "msmall"),
                 year: film.year,
                 title: film.title,
