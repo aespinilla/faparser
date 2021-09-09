@@ -193,7 +193,7 @@ function parseFilm(data) {
 }
 
 function parseSearch(data) {
-    const pathname = url.parse(data.url).pathname;
+    const pathname = url.parse(data.response.request.uri.href).pathname;
     if (pathname.includes('film')) {
         const idTemp = pathname.substring(pathname.indexOf('film') + 'film'.length, pathname.indexOf('.'));
         data.response.lang = data.lang
@@ -203,7 +203,7 @@ function parseSearch(data) {
             count: 1,
             result: [{
                 id: idTemp,
-                url: data.url,
+                url: data.response.request.uri.href,
                 thumbnail: film.imageUrlMed.replace("mmed", "msmall"),
                 year: film.year,
                 title: film.title,
