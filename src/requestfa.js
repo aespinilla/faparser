@@ -1,10 +1,10 @@
 /**
  * Created by aespinilla on 20/6/17.
  */
-const bent = require('bent')
+const request = require('request')
 
 module.exports = {
-    FArequest: requestServer
+    FArequest: rPromise
 }
 
 const BASE_URL = "https://www.filmaffinity.com"
@@ -20,26 +20,28 @@ const searchTypes = {
     PRO_REVIEWS: "/pro-reviews.php?movie-id=",
 }
 
-async function requestServer(data) {
-    const url = computedUrl(data)
-    const get = bent(url)
-    try {
-        let getResult = await get()
-        const body = await getResult.text()
-        return {
-            url: url,
-            type: data.type,
-            isFilm: data.isFilm,
-            lang: data.lang,
-            body: body
-        }
-    } catch (error) {
-        throw {
-            code: error.statusCode,
-            url: url,
-            error: error.message
-        }
-    }
+function rPromise(data) {
+    return new Promise(function (resolve, reject) {
+        const url = computedUrl(data)
+        request(url, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                resolve({
+                    url: url,
+                    response: response,
+                    type: data.type,
+                    isFilm: data.isFilm,
+                    lang: data.lang,
+                    body: body
+                })
+            } else {
+                reject({
+                    code: response.statusCode,
+                    url: url,
+                    error: response.error
+                })
+            }
+        })
+    })
 }
 
 function computedUrl(data) {
