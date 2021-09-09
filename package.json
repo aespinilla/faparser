@@ -2,7 +2,7 @@
   "name": "faparser",
   "version": "1.0.9",
   "description": "Parser for Filmaffinity site",
-  "main": "faparser.js",
+  "main": "src/faparser.js",
   "scripts": {
     "test": "\"\""
   },
