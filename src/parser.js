@@ -238,7 +238,7 @@ function parseSearch(data) {
             filmview.url = relUrl;
             filmview.country = {
                 imgCountry: BASE_URL + jQuery(a).find('.mc-title').find('img').attr('src'),
-                country: jQuery(a).find('.mc-title').find('img').attr('title')
+                country: jQuery(a).find('.mc-title').find('img').attr('alt')
             }
             if (jQuery(a).hasClass('mt')) {
                 year = jQuery(a).find('.ye-w').text();
@@ -368,7 +368,7 @@ function parseSpecialSearch(data) {
             f.title = titleHtml.find('a').attr('title').trim()
             f.country = {
                 imgCountry: BASE_URL + titleHtml.find('img').attr('src'),
-                country: titleHtml.find('img').attr('title')
+                country: titleHtml.find('img').attr('alt')
             }
             f.year = titleHtml.text().substring(f.title.length + 2).replace(")", "").trim()
             f.directors = []
