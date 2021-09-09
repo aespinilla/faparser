@@ -4,7 +4,7 @@
 const jQuery = require('cheerio')
 const url = require('url')
 
-const BASE_URL = "http://www.filmaffinity.com"
+const BASE_URL = "https://www.filmaffinity.com"
 
 module.exports = {
     parseFilm: parseFilm,
@@ -62,7 +62,7 @@ function parseFilm(data) {
                 case "país": {
                     film.country = {
                         imgCountry: BASE_URL + jQuery(a).next().find('img').attr('src'),
-                        country: jQuery(a).next().find('img').attr('title'),
+                        country: jQuery(a).next().find('img').attr('alt'),
                     }
                     break
                 }
@@ -193,7 +193,7 @@ function parseFilm(data) {
 }
 
 function parseSearch(data) {
-    const pathname = url.parse(data.response.request.uri.href).pathname;
+    const pathname = url.parse(data.url).pathname;
     if (pathname.includes('film')) {
         const idTemp = pathname.substring(pathname.indexOf('film') + 'film'.length, pathname.indexOf('.'));
         data.response.lang = data.lang
@@ -203,7 +203,7 @@ function parseSearch(data) {
             count: 1,
             result: [{
                 id: idTemp,
-                url: data.response.request.uri.href,
+                url: data.url,
                 thumbnail: film.imageUrlMed.replace("mmed", "msmall"),
                 year: film.year,
                 title: film.title,
@@ -238,7 +238,7 @@ function parseSearch(data) {
             filmview.url = relUrl;
             filmview.country = {
                 imgCountry: BASE_URL + jQuery(a).find('.mc-title').find('img').attr('src'),
-                country: jQuery(a).find('.mc-title').find('img').attr('title')
+                country: jQuery(a).find('.mc-title').find('img').attr('alt')
             }
             if (jQuery(a).hasClass('mt')) {
                 year = jQuery(a).find('.ye-w').text();
@@ -368,7 +368,7 @@ function parseSpecialSearch(data) {
             f.title = titleHtml.find('a').attr('title').trim()
             f.country = {
                 imgCountry: BASE_URL + titleHtml.find('img').attr('src'),
-                country: titleHtml.find('img').attr('title')
+                country: titleHtml.find('img').attr('alt')
             }
             f.year = titleHtml.text().substring(f.title.length + 2).replace(")", "").trim()
             f.directors = []
