@@ -62,7 +62,7 @@ function parseFilm(data) {
                 case "país": {
                     film.country = {
                         imgCountry: BASE_URL + jQuery(a).next().find('img').attr('src'),
-                        country: jQuery(a).next().find('img').attr('title'),
+                        country: jQuery(a).next().find('img').attr('alt'),
                     }
                     break
                 }
