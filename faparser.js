@@ -13,107 +13,60 @@ module.exports = {
     CAST: 'CAST'
 }
 
-function search(data) {
-    return new Promise(function (resolve, reject) {
-        const now = new Date()
-        data.isFilm = false
-        data.type = data.type || 'TITLE'
-        requestfa.FArequest(data).then(function (res) {
-            res.lang = data.lang
-            res.type = data.type
-            const result = parser.parseSearch(res)
-            log(now, data, result.result)
-            return resolve(result)
-        }).catch(function (error) {
-            console.error('[' + new Date() + '] faparser: ' + JSON.stringify(error))
-            log(now, data, {error: error})
-            return reject({
-                code: error.code,
-                error: error.error
-            })
-        })
-    })
+async function search(data) {
+    data.isFilm = false
+    data.type = data.type || 'TITLE'
+    let res = await requestfa.FArequest(data)
+    res.lang = data.lang
+    res.type = data.type
+    return parser.parseSearch(res)
 }
 
-function preview(data) {
-    return new Promise(function (resolve, reject) {
-        const now = new Date()
-        data.isFilm = true
-        requestfa.FArequest(data).then(function (result) {
-            const film = parser.parseFilm(result)
-            const filmResult = {
-                id: data.id,
-                url: film.url,
-                thumbnail: film.imageUrlMed.replace("mmed", "msmall"),
-                year: film.year,
-                title: film.title,
-                directors: film.directors,
-                cast: film.cast,
-                country: film.country,
-                rating: film.rating ? film.rating.replace(',', '.') : 0,
-                votes: film.votes
-            }
-            log(now, data, film)
-            return resolve(filmResult)
-        }).catch(function (error) {
-            console.error('[' + new Date() + '] faparser: ' + JSON.stringify(error))
-            log(now, data, {error: error})
-            return reject({
-                code: error.code,
-                error: error.error
-            })
-        })
-    })
+async function preview(data) {
+    data.isFilm = true
+    let result = await requestfa.FArequest(data)
+    const film = parser.parseFilm(result)
+    const filmResult = {
+        id: data.id,
+        url: film.url,
+        thumbnail: film.imageUrlMed.replace("mmed", "msmall"),
+        year: film.year,
+        title: film.title,
+        directors: film.directors,
+        cast: film.cast,
+        country: film.country,
+        rating: film.rating ? film.rating.replace(',', '.') : 0,
+        votes: film.votes
+    }
+    return filmResult
 }
 
-function film(data) {
-    return new Promise(function (resolve, reject) {
-        const now = new Date()
-        data.isFilm = true
-        filmTaskPromise(data).then(function (film) {
-            log(now, data, film)
-            return resolve(film)
-        }).catch(function (error) {
-            console.error('[' + new Date() + '] faparser: ' + JSON.stringify(error))
-            log(now, data, {error: error})
-            return reject({
-                code: error.code,
-                error: error.error
-            })
-        })
-    })
+async function film(data) {
+    data.isFilm = true
+    let film = await filmTaskPromise(data)
+    return film
 }
 
-function filmTaskPromise(data) {
-    return new Promise(function (resolve, reject) {
-        const f = data
-        const t = clone(data)
-        t.isFilm = false
-        t.type = 'TRAILERS'
-        const i = clone(data)
-        i.isFilm = false
-        i.type = 'IMAGES'
-        const r = clone(data)
-        r.isFilm = false
-        r.type = 'PRO_REVIEWS'
-
-        Promise.all([requestfa.FArequest(f), requestfa.FArequest(i), requestfa.FArequest(t), requestfa.FArequest(r)])
-            .then(function (result) {
-                const film = parser.parseFilm(result[0])
-                film.id = data.id
-                film.images = parser.parseImages(result[1])
-                film.trailers = parser.parseTrailers(result[2])
-                film.proReviews = parser.parseProReviews(result[3])
-                return resolve(film)
-            }).catch(reject)
-    })
+async function filmTaskPromise(data) {
+    const f = data
+    const t = clone(data)
+    t.isFilm = false
+    t.type = 'TRAILERS'
+    const i = clone(data)
+    i.isFilm = false
+    i.type = 'IMAGES'
+    const r = clone(data)
+    r.isFilm = false
+    r.type = 'PRO_REVIEWS'
+    let result = await Promise.all([requestfa.FArequest(f), requestfa.FArequest(i), requestfa.FArequest(t), requestfa.FArequest(r)])
+    const film = parser.parseFilm(result[0])
+    film.id = data.id
+    film.images = parser.parseImages(result[1])
+    film.trailers = parser.parseTrailers(result[2])
+    film.proReviews = parser.parseProReviews(result[3])
+    return film
 }
 
 function clone(o) {
     return JSON.parse(JSON.stringify(o))
-}
-
-function log(now, data, response) {
-    const diff = new Date().getTime() - now.getTime()
-    console.info('[' + new Date() + '] faparser: ' + 'Process time: ' + diff + 'ms for request data: ' + JSON.stringify(data) + ' with response: ' + JSON.stringify(response))
 }
