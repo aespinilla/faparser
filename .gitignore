@@ -1,5 +1,5 @@
 node_modules/
 *.DS_Store
 .idea
-test.js
+helper.js
 package-lock.json

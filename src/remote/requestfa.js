@@ -1,11 +1,9 @@
 /**
  * Created by aespinilla on 20/6/17.
  */
-const request = require('request')
+const fetch = require('node-fetch')
 
-module.exports = {
-    FArequest: rPromise
-}
+const request = require('request')
 
 const BASE_URL = "https://www.filmaffinity.com"
 
@@ -20,31 +18,21 @@ const searchTypes = {
     PRO_REVIEWS: "/pro-reviews.php?movie-id=",
 }
 
-function rPromise(data) {
-    return new Promise(function (resolve, reject) {
-        const url = computedUrl(data)
-        request(url, function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                resolve({
-                    url: url,
-                    response: response,
-                    type: data.type,
-                    isFilm: data.isFilm,
-                    lang: data.lang,
-                    body: body
-                })
-            } else {
-                reject({
-                    code: response.statusCode,
-                    url: url,
-                    error: response.error
-                })
-            }
-        })
-    })
+const requestSource = async (data) => {
+    const url = buildURL(data)
+    const response = await fetch(url);
+        const result = await response.text();
+        return {
+            url: url,
+            response: response,
+            type: data.type,
+            isFilm: data.isFilm,
+            lang: data.lang,
+            body: result
+        }
 }
 
-function computedUrl(data) {
+function buildURL(data) {
     if (data.isFilm == true) {
         return BASE_URL + '/' + data.lang + '/film' + data.id + '.html'
     }
@@ -68,3 +56,5 @@ function computedUrl(data) {
     //console.info('[' + new Date() + '] faparser: ' + 'Generated URL: ' + computedUrl)
     return computedUrl.toLowerCase()
 }
+
+module.exports = { requestSource: requestSource }

@@ -1,17 +1,6 @@
 const parser = require('./parser')
 const requestfa = require('./requestfa')
 
-module.exports = {
-    film: film,
-    preview: preview,
-    search: search,
-    TITLE: 'TITLE',
-    GENRE: 'GENRE',
-    TOPIC: 'TOPIC',
-    DIRECTOR: 'DIRECTOR',
-    CAST: 'CAST'
-}
-
 async function search(data) {
     data.isFilm = false
     data.type = data.type || 'TITLE'
@@ -40,7 +29,7 @@ async function preview(data) {
     return filmResult
 }
 
-async function film(data) {
+const film = async (data) => {
     data.isFilm = true
     let film = await filmTaskPromise(data)
     return film
@@ -57,7 +46,7 @@ async function filmTaskPromise(data) {
     const r = clone(data)
     r.isFilm = false
     r.type = 'PRO_REVIEWS'
-    let result = await Promise.all([requestfa.FArequest(f), requestfa.FArequest(i), requestfa.FArequest(t), requestfa.FArequest(r)])
+    let result = await Promise.all([requestfa.requestSource(f), requestfa.requestSource(i), requestfa.requestSource(t), requestfa.requestSource(r)])
     const film = parser.parseFilm(result[0])
     film.id = data.id
     film.images = parser.parseImages(result[1])
@@ -68,4 +57,17 @@ async function filmTaskPromise(data) {
 
 function clone(o) {
     return JSON.parse(JSON.stringify(o))
+}
+
+module.exports = {
+    film: film,
+    preview: preview,
+    search: search,
+    types: {
+        TITLE: 'TITLE',
+        GENRE: 'GENRE',
+        TOPIC: 'TOPIC',
+        DIRECTOR: 'DIRECTOR',
+        CAST: 'CAST'
+    }
 }
