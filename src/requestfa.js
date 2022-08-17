@@ -15,6 +15,9 @@ const searchTypes = {
 const requestSource = async (data) => {
     const url = buildURL(data)
     const response = await fetch(url);
+    if (!response.ok) {
+        throw { code: response.status, message: response.statusText, url: url }
+    }
     const result = await response.text();
     return {
         url: url,
