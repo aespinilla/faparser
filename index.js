@@ -1,3 +1,6 @@
 const faparser = require('./src/faparser')
 
-module.exports = { faparser.film, faparser.search }
+module.exports = { 
+    getFilm: faparser.film, 
+    search: faparser.search
+}
