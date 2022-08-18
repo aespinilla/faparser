@@ -11,30 +11,6 @@ const search = async (data) => {
 }
 
 const film = async (data) => {
-    // data.isFilm = true
-    // const f = data
-    // const trailers = { ...data }
-    // trailers.isFilm = false
-    // trailers.type = 'TRAILERS'
-    // const i = { ...data }
-    // i.isFilm = false
-    // i.type = 'IMAGES'
-    // const r = { ...data }
-    // r.isFilm = false
-    // r.type = 'PRO_REVIEWS'
-    // let result = await Promise.all([
-    //     requestfa.requestSource(f), 
-    //     requestfa.requestSource(i), 
-    //     requestfa.requestSource(trailers), 
-    //     requestfa.requestSource(r)
-    // ])
-    // const film = parser.parseFilm(result[0])
-    // film.id = data.id
-    // film.images = parser.parseImages(result[1])
-    // film.trailers = parser.parseTrailers(result[2])
-    // film.proReviews = parser.parseProReviews(result[3])
-    // return film
-
     let result = await Promise.all([
         fetchFilm(data),
         fetchImages(data),

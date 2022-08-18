@@ -6,15 +6,7 @@ const url = require('url')
 
 const BASE_URL = "https://www.filmaffinity.com"
 
-module.exports = {
-    parseFilm: parseFilm,
-    parseSearch: parseSearch,
-    parseTrailers: parseTrailers,
-    parseImages: parseImages,
-    parseProReviews: parseProReviews
-}
-
-function parseFilm(data) {
+const parseFilm = (data) => {
     try {
         const content = jQuery(data.body)
         const film = {}
@@ -192,7 +184,7 @@ function parseFilm(data) {
     return {}
 }
 
-function parseSearch(data) {
+const parseSearch = (data) => {
     const pathname = url.parse(data.response.request.uri.href).pathname;
     if (pathname.includes('film')) {
         const idTemp = pathname.substring(pathname.indexOf('film') + 'film'.length, pathname.indexOf('.'));
@@ -292,10 +284,10 @@ function parseSearch(data) {
     return []
 }
 
-function parseTrailers(data) {
+const parseTrailers = (data) => {
+    const trailers = []
     try {
         const content = jQuery(data.body)
-        const trailers = []
         content.find('iframe').each(function (index, data) {
             const urlt = jQuery(data).attr('src')
             trailers.push(urlt);
@@ -303,12 +295,11 @@ function parseTrailers(data) {
         return trailers
     } catch (err) {
         console.error(err)
-        //throw ({code: 4, msg: 'Can not parse film'})
+        return trailers
     }
-    return []
 }
 
-function parseImages(data) {
+const parseImages = (data) => {
     const items = []
     jQuery(data.body).find('#main-image-wrapper').find('a').each(function (index, item) {
         const href = jQuery(item).attr('href')
@@ -327,9 +318,9 @@ function parseImages(data) {
     return items
 }
 
-function parseProReviews(data) {
+const parseProReviews = (data) => {
+    const reviews = [];
     try {
-        const reviews = [];
         jQuery(data.body).find('.wrap>table>tbody>tr').each(function (index, element) {
             const elHtml = jQuery(element)
             const review = {};
@@ -351,13 +342,13 @@ function parseProReviews(data) {
         return reviews;
     } catch (err) {
         console.error(err)
+        return reviews;
     }
-    return [];
 }
 
-function parseSpecialSearch(data) {
+const parseSpecialSearch = (data) => {
+    const films = []
     try {
-        const films = []
         data.container.find('.record').each(function (index, element) {
             const elHtml = jQuery(element)
             const f = {}
@@ -382,7 +373,6 @@ function parseSpecialSearch(data) {
                         lang: data.lang
                     }
                 })
-
             })
             f.cast = []
             elHtml.find('.mc-cast .credits a').each(function (index, elCast) {
@@ -403,7 +393,15 @@ function parseSpecialSearch(data) {
         })
         return films
     } catch (err) {
-        console.error(err)
+        console.error(err);
+        return films;
     }
-    return []
+}
+
+module.exports = {
+    parseFilm,
+    parseSearch,
+    parseTrailers,
+    parseImages,
+    parseProReviews
 }
