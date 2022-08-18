@@ -240,7 +240,6 @@ const parseSearch = (data) => {
             filmview.year = year;
             let thumbnail = jQuery(a).find('.mc-poster').find('img').attr('src');
             if (thumbnail.includes('noimgfull')) {
-                // thumbnail = BASE_URL + thumbnail
                 thumbnail = `${BASE_URL}${thumbnail}`
             }
             filmview.thumbnail = thumbnail
