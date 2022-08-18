@@ -1,10 +1,22 @@
 const parser = require('./parser')
+const filmParser = require('./parser/filmParser')
 const requestfa = require('./requestfa')
+
+const optionsFilm = {
+    lang: 'es', // es, en
+    extra: [] // trailers, images, reviews
+}
+
+const optionsSearch = {
+    lang: 'es', // es, en
+    type: 'TITLE', //'TITLE', 'GENRE', 'TOPIC', 'DIRECTOR', 'CAST'
+    start: 0, // start page
+}
 
 const search = async (data) => {
     data.isFilm = false
     data.type = data.type || 'TITLE'
-    let res = await requestfa.FArequest(data)
+    let res = await requestfa.requestSource(data)
     res.lang = data.lang
     res.type = data.type
     return parser.parseSearch(res)
@@ -28,7 +40,7 @@ const fetchFilm = async (data) => {
     const filmData = { ...data }
     filmData.isFilm = true
     const result = await requestfa.requestSource(filmData)
-    const film = parser.parseFilm(result)
+    const film = filmParser.parse(result)
     film.id = data.id
     return film
 }
