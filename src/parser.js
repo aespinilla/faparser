@@ -3,6 +3,7 @@
  */
 const jQuery = require('cheerio')
 const url = require('url')
+const utils = require('./utils')
 
 const BASE_URL = "https://www.filmaffinity.com"
 
@@ -149,34 +150,36 @@ const parseFilm = (data) => {
             }
         })
 
+        // TODO: Refactor and handle languages.
         film.streamingPlatforms = {
-            subscription : [],
-            buy          : [],
-            rent         : []
+            subscription: [],
+            buy: [],
+            rent: []
         }
-        content.find( '#stream-wrapper > .body > .sub-title' ).each( function( _, streamingTitle ) {
+        content.find('#stream-wrapper > .body > .sub-title').each(function (_, streamingTitle) {
 
             let providers
-            const streamingType = jQuery( streamingTitle ).text().trim().toLowerCase()
-            switch( streamingType ) {
-                case 'suscripción' : providers = film.streamingPlatforms.subscription; break;
-                case 'compra'      : providers = film.streamingPlatforms.buy;          break;
-                case 'alquiler'    : providers = film.streamingPlatforms.rent;         break;
+            const streamingType = jQuery(streamingTitle).text().trim().toLowerCase()
+            switch (streamingType) {
+                case 'suscripción': providers = film.streamingPlatforms.subscription; break;
+                case 'compra': providers = film.streamingPlatforms.buy; break;
+                case 'alquiler': providers = film.streamingPlatforms.rent; break;
                 default:
-                    console.warn( 'Streaming type not controlled: ', streamingType );
+                    console.warn('Streaming type not controlled: ', streamingType);
                     return;
             }
 
-            jQuery( streamingTitle ).next().find( 'a' ).each( function( _, providerNode ) {
-                const url      = jQuery( providerNode ).attr( 'href' )
-                const provider = jQuery( providerNode ).find( 'img' ).attr( 'alt' ).trim()
-                providers.push( { url, provider } )
-            } )
+            jQuery(streamingTitle).next().find('a').each(function (_, providerNode) {
+                const url = jQuery(providerNode).attr('href')
+                const provider = jQuery(providerNode).find('img').attr('alt').trim()
+                providers.push({ url, provider })
+            })
 
         });
 
-        return film
+        // End of TODO
 
+        return film;
     } catch (err) {
         console.error(err)
         //throw ({code: 4, msg: 'Can not parse film'})
@@ -188,8 +191,7 @@ const parseSearch = (data) => {
     const pathname = url.parse(data.response.url).pathname;
     if (pathname.includes('film')) {
         const idTemp = pathname.substring(pathname.indexOf('film') + 'film'.length, pathname.indexOf('.'));
-        data.response.lang = data.lang
-        const film = parseFilm(data)
+        const film = parseFilm(data);
         return {
             more: false,
             count: 1,
@@ -202,14 +204,14 @@ const parseSearch = (data) => {
                 directors: film.directors,
                 cast: film.cast,
                 country: film.country,
-                rating: data.lang == 'es' && film.rating ? film.rating.replace('.', ',') : film.rating,
-                votes: film.votes
+                rating: utils.parseNumber(film.rating),
+                votes: utils.parseNumber(film.votes)
             }]
         }
     }
 
     if (data.type === 'TOPIC' || data.type === 'GENRE') {
-        const sfilms = parseSpecialSearch({container: jQuery(data.body).find('.title-movies'), lang: data.lang})
+        const sfilms = parseSpecialSearch({ container: jQuery(data.body).find('.title-movies'), lang: data.lang })
         return {
             more: false,
             count: sfilms.length,
@@ -238,43 +240,20 @@ const parseSearch = (data) => {
             filmview.year = year;
             let thumbnail = jQuery(a).find('.mc-poster').find('img').attr('src');
             if (thumbnail.includes('noimgfull')) {
-                thumbnail = BASE_URL + thumbnail
+                // thumbnail = BASE_URL + thumbnail
+                thumbnail = `${BASE_URL}${thumbnail}`
             }
             filmview.thumbnail = thumbnail
             filmview.title = jQuery(a).find('.mc-title').find('a').attr('title').trim();
-            filmview.directors = [];
-            jQuery(a).find('.mc-director').find('.credits').find('a').each(function (index, b) {
-                filmview.directors.push({
-                    name: jQuery(b).attr('title'),
-                    request: {
-                        query: jQuery(b).attr('title'),
-                        type: 'DIRECTOR',
-                        lang: data.lang
-                    }
-                })
-
-            })
-            filmview.cast = [];
-            jQuery(a).find('.mc-cast').find('.credits').find('a').each(function (index, d) {
-                filmview.cast.push({
-                    name: jQuery(d).attr('title'),
-                    request: {
-                        query: jQuery(d).attr('title'),
-                        type: 'CAST',
-                        lang: data.lang
-                    }
-                })
-
-            })
-            filmview.rating = jQuery(a).find('.avgrat-box').text()
-            filmview.votes = jQuery(a).find('.ratcount-box').text().trim()
+            filmview.directors = parsePeople(a, '.mc-director', 'DIRECTOR', data.lang);
+            filmview.cast = parsePeople(a, '.mc-cast', 'CAST', data.lang);
+            let rating = jQuery(a).find('.avgrat-box').text()
+            let votes = jQuery(a).find('.ratcount-box').text()
+            filmview.rating = utils.parseNumber(rating)
+            filmview.votes = utils.parseNumber(votes)
             films.push(filmview);
         })
-        if (content.find('.see-all-button').length) {
-            outPut.more = true
-        } else {
-            outPut.more = false
-        }
+        outPut.more = content.find('.see-all-button').length > 0
         outPut.count = films.length
         outPut.result = films
         return outPut
@@ -282,6 +261,20 @@ const parseSearch = (data) => {
         console.error(err)
     }
     return []
+}
+
+const parsePeople = (element, selector, type, lang) => {
+    return jQuery(element).find(selector).find('.credits').find('a').map(function (_, b) {
+        const name = jQuery(b).attr('title');
+        return {
+            name: name,
+            request: {
+                query: name,
+                type: type,
+                lang: lang
+            }
+        }
+    }).toArray();
 }
 
 const parseTrailers = (data) => {
