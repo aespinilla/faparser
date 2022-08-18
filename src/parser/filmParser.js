@@ -7,18 +7,19 @@ const BASE_URL = "https://www.filmaffinity.com"
 const parseFilm = (data) => {
     try {
         const content = jQuery(data.body)
-        const film = {}
-        film.url = data.url
-        film.imageUrl = content.find('#movie-main-image-container').find('a').attr('href');
-        let imageUrlMed = content.find('#movie-main-image-container').find('img').attr('src');
-        if (imageUrlMed.includes('noimgfull')) {
-            imageUrlMed = BASE_URL + imageUrlMed
-            film.imageUrl = imageUrlMed
+        const film = {
+            title: parseTitle(content),
+            url: data.url,
+            coverImages: parseCoverImages(content),
+            rating: parseRating(content),
+            votes: parseVotes(content)
         }
-        film.imageUrlMed = imageUrlMed
-        film.rating = content.find('#movie-rat-avg').attr('content');
-        film.votes = content.find('#movie-count-rat').find('span').attr('content')
-        film.title = content.find('#main-title').find('span').text().trim();
+        // film.url = data.url;
+        // film.coverImages = parseCoverImages(content);
+        // film.rating = parseRating(content);
+        // film.votes = parseVotes(content);
+
+        // film.title = parseTitle(content);
         content.find('.movie-info dt').each(function (index, a) {
             const bind = jQuery(a).text().trim().toLowerCase();
             switch (bind) {
@@ -182,6 +183,51 @@ const parseFilm = (data) => {
         //throw ({code: 4, msg: 'Can not parse film'})
     }
     return {}
+}
+
+const parseCoverImages = (content) => {
+    try {
+        const imagesContainer = content.find('#movie-main-image-container');
+        const imageUrl = imagesContainer.find('a').attr('href');
+        let imageUrlMed = imagesContainer.find('img').attr('src');
+        if (imageUrlMed.includes('noimgfull')) {
+            imageUrlMed = `${BASE_URL}${imageUrlMed}`
+        }
+        return { imageUrl, imageUrlMed }
+    } catch (error) {
+        console.error(error)
+        return null
+    }
+}
+
+const parseTitle = (content) => {
+    try {
+        const title = content.find('#main-title').find('span').text();
+        return title.trim();
+    } catch (error) {
+        console.error(error)
+        return ''
+    }
+}
+
+const parseRating = (content) => {
+    try {
+        const rating = content.find('#movie-rat-avg').attr('content');
+        return utils.parseNumber(rating)
+    } catch (error) {
+        console.error(error)
+        return null
+    }
+}
+
+const parseVotes = (content) => {
+    try {
+        const votes = content.find('#movie-count-rat').find('span').attr('content');
+        return utils.parseNumber(votes)
+    } catch (error) {
+        console.error(error)
+        return null
+    }
 }
 
 module.exports = { parse: parseFilm }
