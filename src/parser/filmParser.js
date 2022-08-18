@@ -7,122 +7,22 @@ const BASE_URL = "https://www.filmaffinity.com"
 const parseFilm = (data) => {
     try {
         const content = jQuery(data.body)
+        const titles = {
+            title: parseTitle(content),
+        }
         const film = {
-            titles: {
-                title: parseTitle(content),
-            },
             url: data.url,
             coverImages: parseCoverImages(content),
             rating: parseRating(content),
-            votes: parseVotes(content)
+            votes: parseVotes(content),
+            streamingPlatforms: parseStreamingPlatforms(content),
+            ...parseMovieInfo(content, titles, data.lang)
         }
-        content.find('.movie-info dt').each((_, a) => {
-            const bind = jQuery(a).text().trim().toLowerCase();
-            switch (bind) {
-                case "original title":
-                case "título original": {
-                    film.titles = { ...film.titles, ...parseTitles(a, content) }
-                    break
-                }
-                case "year":
-                case "año": {
-                    film.year = parseYear(a);
-                    break
-                }
-                case "running time":
-                case "duración": {
-                    film.running = jQuery(a).next().text().trim()
-                    break
-                }
-                case "country":
-                case "país": {
-                    film.country = parseCountry(a);
-                    break
-                }
-                case "director":
-                case "dirección": {
-                    film.directors = parsePeople(a, 'DIRECTOR', data.lang)
-                    break
-                }
-                case "screenwriter":
-                case "guion":
-                case "guión": {
-                    film.screenwriter = parseStaff(a);
-                    break
-                }
-                case "music":
-                case "música": {
-                    film.music = parseStaff(a);
-                    break
-                }
-                case "cinematography":
-                case "fotografía": {
-                    film.cinematography = parseStaff(a);
-                    break
-                }
-                case "cast":
-                case "reparto": {
-                    film.cast = parsePeople(a, 'CAST', data.lang)
-                    break
-                }
-                case "producer":
-                case "productora": {
-                    film.production = jQuery(a).next().find('.nb span').text()
-                    parseProduction(a);
-                    break
-                }
-                case "genre":
-                case "género": {
-                    film.genre = parseGenres(a, data.lang);
-                    break
-                }
-                case "synopsis / plot":
-                case "sinopsis": {
-                    film.synopsis = parseSypnosis(a);
-                    break
-                }
-                default: {
-                    break
-                }
-            }
-        })
-
-        // TODO: Refactor and handle languages.
-        film.streamingPlatforms = {
-            subscription: [],
-            buy: [],
-            rent: []
-        }
-
-        content.find('#stream-wrapper > .body > .sub-title').each(function (_, streamingTitle) {
-
-            let providers
-            const streamingType = jQuery(streamingTitle).text().trim().toLowerCase()
-            switch (streamingType) {
-                case 'suscripción': providers = film.streamingPlatforms.subscription; break;
-                case 'compra': providers = film.streamingPlatforms.buy; break;
-                case 'alquiler': providers = film.streamingPlatforms.rent; break;
-                default:
-                    console.warn('Streaming type not controlled: ', streamingType);
-                    return;
-            }
-
-            jQuery(streamingTitle).next().find('a').each(function (_, providerNode) {
-                const url = jQuery(providerNode).attr('href')
-                const provider = jQuery(providerNode).find('img').attr('alt').trim()
-                providers.push({ url, provider })
-            })
-
-        });
-
-        // End of TODO
-
         return film;
-    } catch (err) {
-        console.error(err)
-        //throw ({code: 4, msg: 'Can not parse film'})
+    } catch (error) {
+        console.error(error);
+        return {}
     }
-    return {}
 }
 
 const parseCoverImages = (content) => {
@@ -224,6 +124,12 @@ const parseProduction = (content) => {
     console.log(productions)
 }
 
+const parseRunning = (content) => {
+    let text = jQuery(content).next().text().trim();
+    text = text.replace('min.', '').trim();
+    return utils.parseNumber(text);
+}
+
 const parseSypnosis = (content) => {
     try {
        const synopsis = jQuery(content).next().text();
@@ -249,14 +155,9 @@ const parsePeople = (content, type, lang) => {
 }
 
 const parseStaff = (content) => {
-    try {
-        return jQuery(content).next().find('.nb span').map((_, item) => {
-            return jQuery(item).text().trim();
-        }).toArray() 
-    } catch (error) {
-        console.log(error);
-        return null;
-    }
+    return jQuery(content).next().find('.nb span').map((_, item) => {
+        return jQuery(item).text().trim();
+    }).toArray() 
 }
 
 const parseGenres = (content, lang) => {
@@ -277,7 +178,109 @@ const parseGenres = (content, lang) => {
 }
 
 const parseStreamingPlatforms = (content) => {
-    
+    const streamingPlatforms = {
+        subscription: [],
+        buy: [],
+        rent: []
+    }
+
+    content.find('#stream-wrapper > .body > .sub-title').each(function (_, streamingTitle) {
+        let providers
+        const streamingType = jQuery(streamingTitle).text().trim().toLowerCase()
+        switch (streamingType) {
+            case 'suscripción': providers = streamingPlatforms.subscription; break;
+            case 'compra': providers = streamingPlatforms.buy; break;
+            case 'alquiler': providers = streamingPlatforms.rent; break;
+            default:
+                console.warn('Streaming type not controlled: ', streamingType);
+                return;
+        }
+
+        jQuery(streamingTitle).next().find('a').each((_, providerNode) => {
+            const url = jQuery(providerNode).attr('href');
+            const provider = jQuery(providerNode).find('img').attr('alt').trim();
+            providers.push({ url, provider });
+        })
+    });
+
+    return streamingPlatforms
+}
+
+const parseMovieInfo = (content, titles, lang) => {
+    const info = {
+        titles: titles
+    }
+    content.find('.movie-info dt').each((_, a) => {
+        const bind = jQuery(a).text().trim().toLowerCase();
+        switch (bind) {
+            case "original title":
+            case "título original": {
+                info.titles = { ...info.titles, ...parseTitles(a, content) }
+                break
+            }
+            case "year":
+            case "año": {
+                info.year = parseYear(a);
+                break
+            }
+            case "running time":
+            case "duración": {
+                info.running = parseRunning(a);
+                break
+            }
+            case "country":
+            case "país": {
+                info.country = parseCountry(a);
+                break
+            }
+            case "director":
+            case "dirección": {
+                info.directors = parsePeople(a, 'DIRECTOR', lang)
+                break
+            }
+            case "screenwriter":
+            case "guion":
+            case "guión": {
+                info.screenwriter = parseStaff(a);
+                break
+            }
+            case "music":
+            case "música": {
+                info.music = parseStaff(a);
+                break
+            }
+            case "cinematography":
+            case "fotografía": {
+                info.cinematography = parseStaff(a);
+                break
+            }
+            case "cast":
+            case "reparto": {
+                info.cast = parsePeople(a, 'CAST', lang)
+                break
+            }
+            case "producer":
+            case "productora": {
+                info.production = jQuery(a).next().find('.nb span').text()
+                parseProduction(a);
+                break
+            }
+            case "genre":
+            case "género": {
+                info.genre = parseGenres(a, lang);
+                break
+            }
+            case "synopsis / plot":
+            case "sinopsis": {
+                info.synopsis = parseSypnosis(a);
+                break
+            }
+            default: {
+                break
+            }
+        }
+    })
+    return info;
 }
 
 module.exports = { parse: parseFilm }
