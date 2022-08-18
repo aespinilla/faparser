@@ -14,13 +14,7 @@ const parseFilm = (data) => {
             rating: parseRating(content),
             votes: parseVotes(content)
         }
-        // film.url = data.url;
-        // film.coverImages = parseCoverImages(content);
-        // film.rating = parseRating(content);
-        // film.votes = parseVotes(content);
-
-        // film.title = parseTitle(content);
-        content.find('.movie-info dt').each(function (index, a) {
+        content.find('.movie-info dt').each((index, a) => {
             const bind = jQuery(a).text().trim().toLowerCase();
             switch (bind) {
                 case "original title":
@@ -41,7 +35,7 @@ const parseFilm = (data) => {
                 }
                 case "year":
                 case "año": {
-                    film.year = jQuery(a).next().text().trim()
+                    film.year = parseYear(a);
                     break
                 }
                 case "running time":
@@ -51,64 +45,45 @@ const parseFilm = (data) => {
                 }
                 case "country":
                 case "país": {
-                    film.country = {
-                        imgCountry: BASE_URL + jQuery(a).next().find('img').attr('src'),
-                        country: jQuery(a).next().find('img').attr('alt'),
-                    }
+                    film.country = parseCountry(a);
                     break
                 }
                 case "director":
                 case "dirección": {
-                    film.directors = []
-                    jQuery(a).next().find('a').each(function (index2, directors) {
-                        film.directors.push({
-                            name: jQuery(directors).find('span').text().trim(),
-                            request: {
-                                query: jQuery(directors).find('span').text().trim(),
-                                type: 'DIRECTOR',
-                                lang: data.lang
-                            }
-                        })
-                    })
+                    film.directors = parsePeople(a, 'DIRECTOR', data.lang)
                     break
                 }
                 case "screenwriter":
+                case "guion":
                 case "guión": {
-                    film.screenwriter = []
-                    jQuery(a).next().find('.nb span').each(function (index2, guion) {
-                        film.screenwriter.push(jQuery(guion).text().trim())
-                    })
+                    // film.screenwriter = []
+                    // jQuery(a).next().find('.nb span').each(function (index2, guion) {
+                    //     film.screenwriter.push(jQuery(guion).text().trim())
+                    // })
+                    film.screenwriter = parseStaff(a);
                     break
                 }
                 case "music":
                 case "música": {
-                    film.music = [];
-                    jQuery(a).next().find('.nb span').each(function (index3, music) {
-                        film.music.push(jQuery(music).text().trim())
-                    })
+                    // film.music = [];
+                    // jQuery(a).next().find('.nb span').each(function (index3, music) {
+                    //     film.music.push(jQuery(music).text().trim())
+                    // })
+                    film.music = parseStaff(a);
                     break
                 }
                 case "cinematography":
                 case "fotografía": {
-                    film.cinematography = [];
-                    jQuery(a).next().find('.nb span').each(function (index3, foto) {
-                        film.cinematography.push(jQuery(foto).text().trim())
-                    })
+                    // film.cinematography = [];
+                    // jQuery(a).next().find('.nb span').each(function (index3, foto) {
+                    //     film.cinematography.push(jQuery(foto).text().trim())
+                    // })
+                    film.cinematography = parseStaff(a);
                     break
                 }
                 case "cast":
                 case "reparto": {
-                    film.cast = [];
-                    jQuery(a).next().find('a').find('span').each(function (index3, actor) {
-                        film.cast.push({
-                            name: jQuery(actor).text().trim(),
-                            request: {
-                                query: jQuery(actor).text().trim(),
-                                type: 'CAST',
-                                lang: data.lang
-                            }
-                        })
-                    })
+                    film.cast = parsePeople(a, 'CAST', data.lang)
                     break
                 }
                 case "producer":
@@ -139,7 +114,7 @@ const parseFilm = (data) => {
                 }
                 case "synopsis / plot":
                 case "sinopsis": {
-                    film.synopsis = jQuery(a).next().text().trim()
+                    film.synopsis = parseSypnosis(a);
                     break
                 }
                 default: {
@@ -210,6 +185,24 @@ const parseTitle = (content) => {
     }
 }
 
+const parseTitles = (content) => {
+    // TODO: Implements
+}
+
+const parseCountry = (content) => {
+    try {
+        const countryContainer = jQuery(content).next().find('img');
+        const countryPath = countryContainer.attr('src')
+        return {
+            imgCountry: `${BASE_URL}${countryPath}`,
+            country: countryContainer.attr('alt'),
+        } 
+    } catch (error) {
+        console.error(error)
+        return null;
+    }
+}
+
 const parseRating = (content) => {
     try {
         const rating = content.find('#movie-rat-avg').attr('content');
@@ -227,6 +220,51 @@ const parseVotes = (content) => {
     } catch (error) {
         console.error(error)
         return null
+    }
+}
+
+const parseYear = (content) => {
+    try {
+        const year = jQuery(content).next().text();
+        return year.trim();
+    } catch (error) {
+        console.log(error)
+        return ''
+    }
+}
+
+const parseSypnosis = (content) => {
+    try {
+       const synopsis = jQuery(content).next().text();
+       return synopsis.trim();
+    } catch (error) {
+        console.log(error)
+        return ''
+    }
+}
+
+const parsePeople = (content, type, lang) => {
+    return jQuery(content).next().find('a').find('span').map((_, item) => {
+        const name = jQuery(item).text().trim();
+        return {
+            name: name,
+            request: {
+                query: name,
+                type: type,
+                lang: lang
+            }
+        }
+    }).toArray()
+}
+
+const parseStaff = (content) => {
+    try {
+        return jQuery(content).next().find('.nb span').map((_, item) => {
+            return jQuery(item).text().trim();
+        }).toArray() 
+    } catch (error) {
+        console.log(error);
+        return null;
     }
 }
 
