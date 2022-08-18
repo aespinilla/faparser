@@ -45,18 +45,22 @@ function buildURL(data) {
         case 'CAST':
         case 'DIRECTOR': {
             computedUrl = computedUrl + '/search.php?stype=' + searchTypes[type] + '&sn' + '&stext=' + encodeURIComponent(query) + '&from=' + start + orderBy
+            break
         }
         case 'GENRE':
         case 'TOPIC': {
             computedUrl = computedUrl + searchTypes[type] + query + '&attr=rat_count&nodoc'
+            break
         }
         case 'IMAGES':
         case 'TRAILERS':
         case 'PRO_REVIEWS': {
             computedUrl = computedUrl + searchTypes[type] + data.id
+            break
         }
         default: {
             computedUrl = computedUrl + '/search.php?stype=' + searchTypes[type] + '&stext=' + encodeURIComponent(query) + '&from=' + start + orderBy
+            break
         }
     }
     // if (type === 'CAST' || type === 'DIRECTOR') {
