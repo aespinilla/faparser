@@ -8,29 +8,20 @@ const parseFilm = (data) => {
     try {
         const content = jQuery(data.body)
         const film = {
-            title: parseTitle(content),
+            titles: {
+                title: parseTitle(content),
+            },
             url: data.url,
             coverImages: parseCoverImages(content),
             rating: parseRating(content),
             votes: parseVotes(content)
         }
-        content.find('.movie-info dt').each((index, a) => {
+        content.find('.movie-info dt').each((_, a) => {
             const bind = jQuery(a).text().trim().toLowerCase();
             switch (bind) {
                 case "original title":
                 case "título original": {
-                    const element = jQuery(a)
-                    const tO = element.next().text().trim()
-                    film.titleOrig = tO
-                    const akas = []
-                    content.find('dd.akas li').each(function (index, akatitle) {
-                        const ak = jQuery(akatitle).text()
-                        akas.push(ak)
-                    })
-                    if (akas.length != 0) {
-                        film.akas = akas
-                        film.titleOrig = tO.substring(0, tO.length - 3).trim()
-                    }
+                    film.titles = { ...film.titles, ...parseTitles(a, content) }
                     break
                 }
                 case "year":
@@ -56,28 +47,16 @@ const parseFilm = (data) => {
                 case "screenwriter":
                 case "guion":
                 case "guión": {
-                    // film.screenwriter = []
-                    // jQuery(a).next().find('.nb span').each(function (index2, guion) {
-                    //     film.screenwriter.push(jQuery(guion).text().trim())
-                    // })
                     film.screenwriter = parseStaff(a);
                     break
                 }
                 case "music":
                 case "música": {
-                    // film.music = [];
-                    // jQuery(a).next().find('.nb span').each(function (index3, music) {
-                    //     film.music.push(jQuery(music).text().trim())
-                    // })
                     film.music = parseStaff(a);
                     break
                 }
                 case "cinematography":
                 case "fotografía": {
-                    // film.cinematography = [];
-                    // jQuery(a).next().find('.nb span').each(function (index3, foto) {
-                    //     film.cinematography.push(jQuery(foto).text().trim())
-                    // })
                     film.cinematography = parseStaff(a);
                     break
                 }
@@ -88,28 +67,13 @@ const parseFilm = (data) => {
                 }
                 case "producer":
                 case "productora": {
-                    film.production = jQuery(a).next().find('.nb span').text().trim()
+                    film.production = jQuery(a).next().find('.nb span').text()
+                    parseProduction(a);
                     break
                 }
                 case "genre":
                 case "género": {
-                    film.genre = []
-                    jQuery(a).next().find('a').each(function (index3, genero) {
-                        const link = jQuery(genero).attr('href')
-                        const g = jQuery(genero).text().trim()
-                        let gnr = url.parse(link, true).query.genre
-                        if (!gnr) {
-                            gnr = url.parse(link, true).query.topic
-                        }
-                        film.genre.push({
-                            name: g,
-                            request: {
-                                query: gnr,
-                                type: link.includes('moviegenre.php') ? 'GENRE' : (link.includes('movietopic.php') ? 'TOPIC' : 'TITLE'),
-                                lang: data.lang
-                            }
-                        })
-                    })
+                    film.genre = parseGenres(a, data.lang);
                     break
                 }
                 case "synopsis / plot":
@@ -129,6 +93,7 @@ const parseFilm = (data) => {
             buy: [],
             rent: []
         }
+
         content.find('#stream-wrapper > .body > .sub-title').each(function (_, streamingTitle) {
 
             let providers
@@ -185,8 +150,23 @@ const parseTitle = (content) => {
     }
 }
 
-const parseTitles = (content) => {
-    // TODO: Implements
+const parseTitles = (element, content) => {
+    try {
+        let original = jQuery(element).next().text().trim()
+        const akas = content.find('dd.akas li').map((_, akatitle) => {
+            const ak = jQuery(akatitle).text()
+            return ak
+        }).toArray();
+
+        if (akas.length > 0) {
+            original = original.substring(0, original.length - 3).trim()
+            return { akas, original }
+        }
+        return { original } 
+    } catch (error) {
+        console.error(error)
+        return {};
+    }
 }
 
 const parseCountry = (content) => {
@@ -233,6 +213,17 @@ const parseYear = (content) => {
     }
 }
 
+const parseProduction = (content) => {
+    // TODO: Fix
+
+    const productions = jQuery(content).next().find('span.nb').map((_, item) => {
+        const name = jQuery(item).text()
+        console.log(name)
+        return name
+    })
+    console.log(productions)
+}
+
 const parseSypnosis = (content) => {
     try {
        const synopsis = jQuery(content).next().text();
@@ -266,6 +257,27 @@ const parseStaff = (content) => {
         console.log(error);
         return null;
     }
+}
+
+const parseGenres = (content, lang) => {
+    return jQuery(content).next().find('a').map((_, item) => {
+        const linkContent = jQuery(item)
+        const link = linkContent.attr('href')
+        const name = linkContent.text().trim()
+        const query = url.parse(link, true).query.genre || url.parse(link, true).query.topic
+        return {
+            name: name,
+            request: {
+                query: query,
+                type: link.includes('moviegenre.php') ? 'GENRE' : (link.includes('movietopic.php') ? 'TOPIC' : 'TITLE'),
+                lang: lang
+            }
+        }
+    }).toArray();
+}
+
+const parseStreamingPlatforms = (content) => {
+    
 }
 
 module.exports = { parse: parseFilm }
