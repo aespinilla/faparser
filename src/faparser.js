@@ -1,6 +1,6 @@
 const parser = require('./parser')
-const filmParser = require('./parser/filmParser')
 const requestfa = require('./requestfa')
+const filmController = require('./controller/filmController')
 
 const optionsFilm = {
     lang: 'es', // es, en
@@ -39,9 +39,8 @@ const film = async (data) => {
 const fetchFilm = async (data) => {
     const filmData = { ...data }
     filmData.isFilm = true
-    const result = await requestfa.requestSource(filmData)
-    const film = filmParser.parse(result)
-    return { id: `${data.id}`, ...film }
+    const result = await filmController.fetchFilm(data);
+    return result;
 }
 
 const fetchTrailers = async (data) => {
