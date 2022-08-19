@@ -2,9 +2,9 @@ const imagesParser = require('../parser/imagesParser');
 const requestfa = require('../requestfa');
 
 const fetchImages = async (data) => {
-    images.type = 'IMAGES'
-    const response = await requestfa.requestSource(images);
-    const result = imagesParser.parseImages(response);
+    data.type = 'IMAGES'
+    const response = await requestfa.requestSource(data);
+    const result = imagesParser.parse(response);
     return result;
 }
 

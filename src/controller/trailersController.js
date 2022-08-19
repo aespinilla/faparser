@@ -3,8 +3,8 @@ const requestfa = require('../requestfa');
 
 const fetchTrailers = async (data) => {
     data.type = 'TRAILERS'
-    const response = await requestfa.requestSource(trailers)
-    const result = trailersParser.parse(result);
+    const response = await requestfa.requestSource(data);
+    const result = trailersParser.parse(response);
     return result;
 }
 
