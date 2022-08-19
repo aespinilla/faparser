@@ -1,9 +1,7 @@
-const jQuery = require('cheerio')
-const utils = require('./utils')
+const jQuery = require('cheerio');
+const utils = require('./utils');
 
 const BASE_URL = "https://www.filmaffinity.com"
-
-// const sfilms = parseSpecialSearch({ container: jQuery(data.body).find('.title-movies'), lang: data.lang })
 
 const parse = (data) => {
     const films = []
