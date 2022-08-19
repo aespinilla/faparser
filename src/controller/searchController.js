@@ -10,15 +10,15 @@ const search = async (data) => {
     response.lang = data.lang;
     response.type = data.type;
 
-    if (isFilm(data.response.url)) {
-        const id = getId(data.response.url);
-        const film = filmParser.parse(data);
+    if (isFilm(response.response.url)) {
+        const id = getId(response.response.url);
+        const film = filmParser.parse(response);
         const result = mapFilm(id, film);
         return buildOutput([result], false);
     }
 
     if (data.type === 'TOPIC' || data.type === 'GENRE') {
-        const result = specialSearchParser.parse(data);
+        const result = specialSearchParser.parse(response);
         return buildOutput(result, false);
     }
 

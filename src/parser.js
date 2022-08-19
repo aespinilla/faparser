@@ -1,6 +1,11 @@
 /**
  * Created by aespinilla on 8/3/17.
  */
+
+/**
+ * DEPRECATED
+ */
+
 const jQuery = require('cheerio')
 const url = require('url')
 const utils = require('./utils')

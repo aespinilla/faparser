@@ -1,8 +1,8 @@
-const parser = require('./parser');
-const requestfa = require('./requestfa');
-
 const filmController = require('./controller/filmController');
 const searchController = require('./controller/searchController');
+const trailersController = require('./controller/trailersController');
+const imagesController = require('./controller/imagesController');
+const proReviewsController = require('./controller/proReviewsController');
 
 const optionsFilm = {
     lang: 'es', // es, en
@@ -16,9 +16,10 @@ const optionsSearch = {
 }
 
 const search = async (data) => {
-    data.isFilm = false
-    data.type = data.type || 'TITLE'
-    const result = await searchController.search(data);
+    const search = { ...data }
+    search.isFilm = false
+    search.type = data.type || 'TITLE'
+    const result = await searchController.search(search);
     return result;
 }
 
@@ -46,25 +47,22 @@ const fetchFilm = async (data) => {
 const fetchTrailers = async (data) => {
     const trailers = { ...data }
     trailers.isFilm = false
-    trailers.type = 'TRAILERS'
-    let result = await requestfa.requestSource(trailers)
-    return parser.parseTrailers(result)
+    const result = await trailersController.fetchTrailers(trailers);
+    return result;
 }
 
 const fetchImages = async (data) => {
     const images = { ...data }
     images.isFilm = false
-    images.type = 'IMAGES'
-    let result = await requestfa.requestSource(images)
-    return parser.parseImages(result)
+    const result = await imagesController.fetchTrailers(images);
+    return result;
 }
 
 const fetchProReviews = async (data) => {
     const reviews = { ...data }
     reviews.isFilm = false
-    reviews.type = 'PRO_REVIEWS'
-    let result = await requestfa.requestSource(reviews)
-    return parser.parseProReviews(result)
+    const result = await proReviewsController.fetchTrailers(reviews);
+    return result;
 }
 
 module.exports = {
