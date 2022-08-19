@@ -49,8 +49,7 @@ function buildURL(data) {
         }
         case 'GENRE':
         case 'TOPIC': {
-            computedUrl = computedUrl + searchTypes[type] + query + '&attr=rat_count&nodoc'
-            break
+            return computedUrl + searchTypes[type] + query.toUpperCase() + '&attr=rat_count&nodoc'
         }
         case 'IMAGES':
         case 'TRAILERS':

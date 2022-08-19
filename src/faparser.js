@@ -54,14 +54,14 @@ const fetchTrailers = async (data) => {
 const fetchImages = async (data) => {
     const images = { ...data }
     images.isFilm = false
-    const result = await imagesController.fetchTrailers(images);
+    const result = await imagesController.fetchImages(images);
     return result;
 }
 
 const fetchProReviews = async (data) => {
     const reviews = { ...data }
     reviews.isFilm = false
-    const result = await proReviewsController.fetchTrailers(reviews);
+    const result = await proReviewsController.fetchProReviews(reviews);
     return result;
 }
 

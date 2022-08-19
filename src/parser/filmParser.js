@@ -116,12 +116,12 @@ const parseYear = (content) => {
 const parseProduction = (content) => {
     // TODO: Fix
 
-    const productions = jQuery(content).next().find('span.nb').map((_, item) => {
-        const name = jQuery(item).text()
-        console.log(name)
-        return name
-    })
-    console.log(productions)
+    // const productions = jQuery(content).next().find('span.nb').map((_, item) => {
+    //     const name = jQuery(item).text()
+    //     console.log(name)
+    //     return name
+    // })
+    // console.log(productions)
 }
 
 const parseRunning = (content) => {

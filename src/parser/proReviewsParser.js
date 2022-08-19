@@ -17,9 +17,9 @@ const parse = (data) => {
                 bias: parseBias(elHtml),
                 source: parseSource(authorHtml)
             };
-            
+
             return review;
-        });
+        }).toArray();
     } catch (error) {
         console.error(error);
         return [];

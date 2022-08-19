@@ -3,7 +3,7 @@ const requestfa = require('../requestfa');
 
 const fetchProReviews = async (data) => {
     data.type = 'PRO_REVIEWS'
-    const response = await requestfa.requestSource(reviews);
+    const response = await requestfa.requestSource(data);
     const result = proReviewsParser.parse(response);
     return result;
 }

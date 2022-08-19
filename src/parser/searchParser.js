@@ -26,7 +26,7 @@ const parse = (data) => {
             };
 
             return filmview;
-        })
+        }).toArray();
         const hasMore = content.find('.see-all-button').length > 0
         return { result, hasMore }
     } catch (error) {

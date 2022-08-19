@@ -4,7 +4,6 @@ const utils = require('../utils');
 const BASE_URL = "https://www.filmaffinity.com"
 
 const parse = (data) => {
-    const films = []
     try {
         const content = jQuery(data.body).find('.title-movies');
         return content.find('.record').map((_, element) => {
@@ -16,7 +15,7 @@ const parse = (data) => {
                 thumbnail: parseThumbnail(elHtml),
                 url: parseUrl(elHtml),
                 country: parseCountry(titleHtml),
-                year: parseYear(titleHtml, this.title),
+                year: parseYear(titleHtml),
                 rating: parseNumberValue(elHtml, '.avg-w'),
                 votes: parseNumberValue(elHtml, '.votes2'),
                 directors: parsePeople(elHtml, '.mc-director', 'DIRECTOR', data.lang),
@@ -43,7 +42,7 @@ const parseTitle = (content) => {
 
 const parseUrl = (content) => {
     const href = content.find('a').attr('href');
-    return `${BASE_URL}${href}`;
+    return href;
 }
 
 const parseNumberValue = (content, selector) => {
@@ -61,7 +60,8 @@ const parseCountry = (content) => {
     }
 }
 
-const parseYear = (content, title) => {
+const parseYear = (content) => {
+    const title = parseTitle(content);
     return content.text().substring(title.length + 2).replace(")", "").trim();
 }
 
