@@ -4,7 +4,7 @@ const utils = require('../utils')
 
 const BASE_URL = "https://www.filmaffinity.com"
 
-const parseFilm = (data) => {
+const parse = (data) => {
     try {
         const content = jQuery(data.body)
         const titles = {
@@ -283,4 +283,4 @@ const parseMovieInfo = (content, titles, lang) => {
     return info;
 }
 
-module.exports = { parse: parseFilm }
+module.exports = { parse }
