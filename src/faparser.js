@@ -41,7 +41,6 @@ const fetchFilm = async (data) => {
     filmData.isFilm = true
     const result = await requestfa.requestSource(filmData)
     const film = filmParser.parse(result)
-    // film.id = data.id
     return { id: `${data.id}`, ...film }
 }
 
