@@ -1,5 +1,5 @@
-const filmParser = require('../parser/filmParser')
-const requestfa = require('../requestfa')
+const filmParser = require('../parser/filmParser');
+const requestfa = require('../requestfa');
 
 const fetchFilm = async (data) => {
     const result = await requestfa.requestSource(data)

@@ -1,5 +1,4 @@
 const jQuery = require('cheerio')
-const url = require('url')
 const utils = require('./utils')
 
 const BASE_URL = "https://www.filmaffinity.com"

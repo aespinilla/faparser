@@ -1,6 +1,8 @@
-const parser = require('./parser')
-const requestfa = require('./requestfa')
-const filmController = require('./controller/filmController')
+const parser = require('./parser');
+const requestfa = require('./requestfa');
+
+const filmController = require('./controller/filmController');
+const searchController = require('./controller/searchController');
 
 const optionsFilm = {
     lang: 'es', // es, en
@@ -16,10 +18,8 @@ const optionsSearch = {
 const search = async (data) => {
     data.isFilm = false
     data.type = data.type || 'TITLE'
-    let res = await requestfa.requestSource(data)
-    res.lang = data.lang
-    res.type = data.type
-    return parser.parseSearch(res)
+    const result = await searchController.search(data);
+    return result;
 }
 
 const film = async (data) => {
