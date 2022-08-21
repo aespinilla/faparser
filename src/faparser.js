@@ -17,7 +17,6 @@ const optionsSearch = {
 
 const search = async (data) => {
     const search = { ...data }
-    search.isFilm = false
     search.type = data.type || 'TITLE'
     const result = await searchController.search(search);
     return result;
@@ -39,28 +38,24 @@ const film = async (data) => {
 
 const fetchFilm = async (data) => {
     const filmData = { ...data }
-    filmData.isFilm = true
     const result = await filmController.fetchFilm(data);
     return result;
 }
 
 const fetchTrailers = async (data) => {
     const trailers = { ...data }
-    trailers.isFilm = false
     const result = await trailersController.fetchTrailers(trailers);
     return result;
 }
 
 const fetchImages = async (data) => {
     const images = { ...data }
-    images.isFilm = false
     const result = await imagesController.fetchImages(images);
     return result;
 }
 
 const fetchProReviews = async (data) => {
     const reviews = { ...data }
-    reviews.isFilm = false
     const result = await proReviewsController.fetchProReviews(reviews);
     return result;
 }

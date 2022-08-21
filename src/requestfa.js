@@ -1,7 +1,4 @@
 const fetch = require('node-fetch');
-const Config = require('../config/config.json');
-const BASE_URL = Config.BASE_URL
-
 
 const requestSource = async (url) => {
     const response = await fetch(url);
@@ -12,9 +9,6 @@ const requestSource = async (url) => {
     return {
         url: url,
         response: response,
-        // type: data.type,
-        // isFilm: data.isFilm,
-        // lang: data.lang,
         body: result
     }
 }
