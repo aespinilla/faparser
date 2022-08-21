@@ -1,4 +1,9 @@
 const url = require('url');
+
+const searchUrlBuilder = require('../urlBuilder/searchUrlBuilder');
+const genreUrlBuilder = require('../urlBuilder/genreUrlBuilder');
+const topicUrlBuilder = require('../urlBuilder/topicUrlBuilder');
+
 const requestfa = require('../requestfa');
 
 const filmParser = require('../parser/filmParser');
@@ -6,20 +11,27 @@ const specialSearchParser = require('../parser/specialSearch');
 const searchParser = require('../parser/searchParser');
 
 const search = async (data) => {
-    const response = await requestfa.requestSource(data);
+    if (data.type === 'TOPIC') {
+        const result = await getTopics(data);
+        result.lang = data.lang;
+        return buildOutput(result, false);
+    }
+
+    if (data.type === 'GENRE') {
+        const result = await getGenres(data);
+        result.lang = data.lang;
+        return buildOutput(result, false);
+    }
+
+    const url = searchUrlBuilder.build(data);
+    const response = await requestfa.requestSource(url);
     response.lang = data.lang;
-    response.type = data.type;
 
     if (isFilm(response.response.url)) {
         const id = getId(response.response.url);
         const film = filmParser.parse(response);
         const result = mapFilm(id, film);
         return buildOutput([result], false);
-    }
-
-    if (data.type === 'TOPIC' || data.type === 'GENRE') {
-        const result = specialSearchParser.parse(response);
-        return buildOutput(result, false);
     }
 
     const result = searchParser.parse(response);
@@ -34,6 +46,22 @@ const isFilm = (responseUrl) => {
 const getId = (responseUrl) => {
     const pathname = url.parse(responseUrl).pathname;
     return pathname.substring(pathname.indexOf('film') + 'film'.length, pathname.indexOf('.'));
+}
+
+const getTopics = async (data) => {
+    const url = topicUrlBuilder.build(data);
+    return await getSpecialSearch(url);
+}
+
+const getGenres = async (data) => {
+    const url = genreUrlBuilder.build(data);
+    return await getSpecialSearch(url);
+}
+
+const getSpecialSearch = async (url) => {
+    const response = await requestfa.requestSource(url);
+    const result = specialSearchParser.parse(response);
+    return result;
 }
 
 const mapFilm = (id, film) => {
