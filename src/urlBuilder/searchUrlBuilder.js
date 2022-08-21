@@ -3,7 +3,6 @@ const Config = require('../../config/config.json');
 const peopleSearch = ['CAST', 'DIRECTOR'];
 const types = ['TITLE', ...peopleSearch];
 
-
 const build = (data) => {
     const lang = data.lang || 'es';
     const type = data.type && (types.includes(data.type)) ? data.type : 'TITLE';
