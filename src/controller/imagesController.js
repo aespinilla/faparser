@@ -1,9 +1,11 @@
 const imagesParser = require('../parser/imagesParser');
 const requestfa = require('../requestfa');
+const urlBuilder = require('../urlBuilder/imagesUrlBuilder');
 
 const fetchImages = async (data) => {
     data.type = 'IMAGES'
-    const response = await requestfa.requestSource(data);
+    const url = urlBuilder.build(data);
+    const response = await requestfa.requestSource(url);
     const result = imagesParser.parse(response);
     return result;
 }

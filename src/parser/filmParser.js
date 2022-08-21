@@ -1,8 +1,8 @@
-const jQuery = require('cheerio')
-const url = require('url')
-const utils = require('../utils')
+const jQuery = require('cheerio');
+const url = require('url');
+const utils = require('../utils');
 
-const BASE_URL = "https://www.filmaffinity.com"
+const BASE_URL = require('../../config/config.json').BASE_URL;
 
 const parse = (data) => {
     try {
@@ -45,8 +45,8 @@ const parseTitle = (content) => {
         const title = content.find('#main-title').find('span').text();
         return title.trim();
     } catch (error) {
-        console.error(error)
-        return ''
+        console.error(error);
+        return '';
     }
 }
 
@@ -54,17 +54,17 @@ const parseTitles = (element, content) => {
     try {
         let original = jQuery(element).next().text().trim()
         const akas = content.find('dd.akas li').map((_, akatitle) => {
-            const ak = jQuery(akatitle).text()
-            return ak
+            const ak = jQuery(akatitle).text();
+            return ak;
         }).toArray();
 
         if (akas.length > 0) {
-            original = original.substring(0, original.length - 3).trim()
+            original = original.substring(0, original.length - 3).trim();
             return { akas, original }
         }
         return { original } 
     } catch (error) {
-        console.error(error)
+        console.error(error);
         return {};
     }
 }

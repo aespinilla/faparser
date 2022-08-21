@@ -1,9 +1,12 @@
 const filmParser = require('../parser/filmParser');
 const requestfa = require('../requestfa');
+const urlBuilder = require('../urlBuilder/filmUrlBuilder');
 
 const fetchFilm = async (data) => {
-    const result = await requestfa.requestSource(data)
-    const film = filmParser.parse(result)
+    const url = urlBuilder.build(data);
+    const result = await requestfa.requestSource(url);
+    result.lang = data.lang;
+    const film = filmParser.parse(result);
     return { id: `${data.id}`, ...film }
 }
 

@@ -1,7 +1,7 @@
 const jQuery = require('cheerio');
 const utils = require('../utils');
 
-const BASE_URL = "https://www.filmaffinity.com"
+const BASE_URL = require('../../config/config.json').BASE_URL;
 
 const parse = (data) => {
     try {
