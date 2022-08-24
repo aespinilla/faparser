@@ -62,7 +62,7 @@ const parseTitles = (element, content) => {
             original = original.substring(0, original.length - 3).trim();
             return { akas, original }
         }
-        return { original } 
+        return { original }
     } catch (error) {
         console.error(error);
         return {};
@@ -76,7 +76,7 @@ const parseCountry = (content) => {
         return {
             imgCountry: `${BASE_URL}${countryPath}`,
             country: countryContainer.attr('alt'),
-        } 
+        }
     } catch (error) {
         console.error(error)
         return null;
@@ -114,14 +114,16 @@ const parseYear = (content) => {
 }
 
 const parseProduction = (content) => {
-    // TODO: Fix
-
-    // const productions = jQuery(content).next().find('span.nb').map((_, item) => {
-    //     const name = jQuery(item).text()
-    //     console.log(name)
-    //     return name
-    // })
-    // console.log(productions)
+    const productions = [];
+    jQuery(content).next().find('span.nb').each((_, item) => {
+        const container = jQuery(item);
+        const name = jQuery(item).text().trim().replace(',', '');
+        productions.push(name);
+        if (container.next().is('i')) {
+            return false;
+        }
+    });
+    return productions;
 }
 
 const parseRunning = (content) => {
@@ -132,8 +134,8 @@ const parseRunning = (content) => {
 
 const parseSypnosis = (content) => {
     try {
-       const synopsis = jQuery(content).next().text();
-       return synopsis.trim();
+        const synopsis = jQuery(content).next().text();
+        return synopsis.trim();
     } catch (error) {
         console.log(error)
         return ''
@@ -157,7 +159,7 @@ const parsePeople = (content, type, lang) => {
 const parseStaff = (content) => {
     return jQuery(content).next().find('.nb span').map((_, item) => {
         return jQuery(item).text().trim();
-    }).toArray() 
+    }).toArray()
 }
 
 const parseGenres = (content, lang) => {
@@ -261,8 +263,7 @@ const parseMovieInfo = (content, titles, lang) => {
             }
             case "producer":
             case "productora": {
-                info.production = jQuery(a).next().find('.nb span').text()
-                parseProduction(a);
+                info.production = parseProduction(a);
                 break
             }
             case "genre":
