@@ -1,10 +1,11 @@
-const jQuery = require('cheerio');
-const url = require('url');
-const utils = require('../utils');
+import Config from '../../config/config.json' assert { type: "json" };
+import jQuery from 'cheerio';
+import url from 'url';
+import { parseNumber } from '../utils.js';
 
-const BASE_URL = require('../../config/config.json').BASE_URL;
+const BASE_URL = Config.BASE_URL;
 
-const parse = (data) => {
+export const parse = (data) => {
     try {
         const content = jQuery(data.body)
         const titles = {
@@ -86,7 +87,7 @@ const parseCountry = (content) => {
 const parseRating = (content) => {
     try {
         const rating = content.find('#movie-rat-avg').attr('content');
-        return utils.parseNumber(rating)
+        return parseNumber(rating)
     } catch (error) {
         console.error(error)
         return null
@@ -96,7 +97,7 @@ const parseRating = (content) => {
 const parseVotes = (content) => {
     try {
         const votes = content.find('#movie-count-rat').find('span').attr('content');
-        return utils.parseNumber(votes)
+        return parseNumber(votes)
     } catch (error) {
         console.error(error)
         return null
@@ -129,7 +130,7 @@ const parseProduction = (content) => {
 const parseRunning = (content) => {
     let text = jQuery(content).next().text().trim();
     text = text.replace('min.', '').trim();
-    return utils.parseNumber(text);
+    return parseNumber(text);
 }
 
 const parseSypnosis = (content) => {
@@ -283,5 +284,3 @@ const parseMovieInfo = (content, titles, lang) => {
     })
     return info;
 }
-
-module.exports = { parse }

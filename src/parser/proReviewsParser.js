@@ -1,8 +1,9 @@
-const jQuery = require('cheerio');
+import Config from '../../config/config.json' assert { type: "json" };
+import jQuery from 'cheerio';
 
-const BASE_URL = require('../../config/config.json').BASE_URL;
+const BASE_URL = Config.BASE_URL;
 
-const parse = (data) => {
+export const parse = (data) => {
     try {
         return jQuery(data.body).find('.wrap>table>tbody>tr').map((_, element) => {
             const elHtml = jQuery(element);
@@ -59,5 +60,3 @@ const parseSource = (content) => {
     const source = content.find('strong').text().trim(); // This is for Filmaffinity review
     return source === "" ? content.find('em').text().trim() : source;
 }
-
-module.exports = { parse }

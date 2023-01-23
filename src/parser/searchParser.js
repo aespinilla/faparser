@@ -1,9 +1,10 @@
-const jQuery = require('cheerio');
-const utils = require('../utils');
+import Config from '../../config/config.json' assert { type: "json" };
+import jQuery from 'cheerio';
+import { parseNumber } from '../utils.js';
 
-const BASE_URL = require('../../config/config.json').BASE_URL;
+const BASE_URL = Config.BASE_URL;
 
-const parse = (data) => {
+export const parse = (data) => {
     try {
         const content = jQuery(data.body)
         let year;
@@ -21,8 +22,8 @@ const parse = (data) => {
                 title: parseTitle(a),
                 directors: parsePeople(a, '.mc-director', 'DIRECTOR', data.lang),
                 cast: parsePeople(a, '.mc-cast', 'CAST', data.lang),
-                rating: parseNumber(a, '.avgrat-box'),
-                votes: parseNumber(a, '.ratcount-box')
+                rating: getNumber(a, '.avgrat-box'),
+                votes: getNumber(a, '.ratcount-box')
             };
 
             return filmview;
@@ -78,9 +79,7 @@ const parsePeople = (element, selector, type, lang) => {
     }).toArray();
 }
 
-const parseNumber = (content, selector) => {
+const getNumber = (content, selector) => {
     const selection = jQuery(content).find(selector).text();
-    return utils.parseNumber(selection);
+    return parseNumber(selection);
 }
-
-module.exports = { parse }

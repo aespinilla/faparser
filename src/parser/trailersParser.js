@@ -1,6 +1,6 @@
-const jQuery = require('cheerio');
+import jQuery from 'cheerio';
 
-const parse = (data) => {
+export const parse = (data) => {
     try {
         const content = jQuery(data.body);
         return content.find('iframe').map((_, element) => {
@@ -12,5 +12,3 @@ const parse = (data) => {
         return [];
     }
 }
-
-module.exports = { parse }

@@ -1,6 +1,6 @@
-const jQuery = require('cheerio');
+import jQuery from 'cheerio';
 
-const parse = (data) => {
+export const parse = (data) => {
     return jQuery(data.body).find('#main-image-wrapper').find('a').map((_, item) => {
         const href = jQuery(item).attr('href');
         if (href.includes('.jpg')) {
@@ -16,5 +16,3 @@ const parse = (data) => {
         }
     }).toArray();
 }
-
-module.exports = { parse }

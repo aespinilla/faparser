@@ -1,9 +1,10 @@
-const jQuery = require('cheerio');
-const utils = require('../utils');
+import Config from '../../config/config.json' assert { type: "json" };
+import jQuery from 'cheerio';
+import { parseNumber } from '../utils.js';
 
-const BASE_URL = require('../../config/config.json').BASE_URL;
+const BASE_URL = Config.BASE_URL;
 
-const parse = (data) => {
+export const parse = (data) => {
     try {
         const content = jQuery(data.body).find('.title-movies');
         return content.find('.record').map((_, element) => {
@@ -16,8 +17,8 @@ const parse = (data) => {
                 url: parseUrl(elHtml),
                 country: parseCountry(titleHtml),
                 year: parseYear(titleHtml),
-                rating: parseNumberValue(elHtml, '.avg-w'),
-                votes: parseNumberValue(elHtml, '.votes2'),
+                rating: getNumber(elHtml, '.avg-w'),
+                votes: getNumber(elHtml, '.votes2'),
                 directors: parsePeople(elHtml, '.mc-director', 'DIRECTOR', data.lang),
                 cast: parsePeople(elHtml, '.mc-cast', 'CAST', data.lang)
             }
@@ -45,9 +46,9 @@ const parseUrl = (content) => {
     return href;
 }
 
-const parseNumberValue = (content, selector) => {
+const getNumber = (content, selector) => {
     const value = content.find(selector).text().trim();
-    return utils.parseNumber(value);
+    return parseNumber(value);
 }
 
 const parseCountry = (content) => {
@@ -78,5 +79,3 @@ const parsePeople = (content, selector, type, lang) => {
         }
     }).toArray();
 }
-
-module.exports = { parse }
