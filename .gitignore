@@ -4,3 +4,4 @@ node_modules/
 helper.js
 package-lock.json
 .vscode
+coverage

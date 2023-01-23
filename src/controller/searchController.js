@@ -4,7 +4,7 @@ const searchUrlBuilder = require('../urlBuilder/searchUrlBuilder');
 const genreUrlBuilder = require('../urlBuilder/genreUrlBuilder');
 const topicUrlBuilder = require('../urlBuilder/topicUrlBuilder');
 
-const requestfa = require('../requestfa');
+const requestfa = require('../request/request');
 
 const filmParser = require('../parser/filmParser');
 const specialSearchParser = require('../parser/specialSearch');

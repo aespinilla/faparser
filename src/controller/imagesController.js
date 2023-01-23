@@ -1,5 +1,5 @@
 const imagesParser = require('../parser/imagesParser');
-const requestfa = require('../requestfa');
+const requestfa = require('../request/request');
 const urlBuilder = require('../urlBuilder/imagesUrlBuilder');
 
 const fetchImages = async (data) => {

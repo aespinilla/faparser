@@ -1,5 +1,5 @@
 const proReviewsParser = require('../parser/proReviewsParser');
-const requestfa = require('../requestfa');
+const requestfa = require('../request/request');
 const urlBuilder = require('../urlBuilder/proReviewsUrlBuilder');
 
 const fetchProReviews = async (data) => {

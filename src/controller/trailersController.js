@@ -1,5 +1,5 @@
 const trailersParser = require('../parser/trailersParser');
-const requestfa = require('../requestfa');
+const requestfa = require('../request/request');
 const urlBuilder = require('../urlBuilder/trailersUrlBuilder');
 
 const fetchTrailers = async (data) => {

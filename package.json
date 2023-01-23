@@ -13,8 +13,15 @@
     "type": "git",
     "url": "https://github.com/aespinilla/faparser.git"
   },
+  "type": "module",
   "scripts": {
-    "test": "\"\""
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test: debug": "jest =-runInBand"
+  },
+  "jest": {
+    "testEnvironment": "jest-environment-node",
+    "transform": {},
+    "collectCoverage": true
   },
   "keywords": [
     "filmaffinity",
@@ -30,7 +37,10 @@
     "film"
   ],
   "dependencies": {
-    "cheerio": "1.0.0-rc.2",
-    "node-fetch": "^2.0"
+    "cheerio": "1.0.0-rc.2"
+  },
+  "devDependencies": {
+    "jest": "^28.1.3",
+    "supertest": "^6.2.4"
   }
 }
