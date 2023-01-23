@@ -1,9 +1,9 @@
-const Config = require('../../config/config.json');
+import Config from '../../config/config.json' assert { type: "json" };
 
 const peopleSearch = ['CAST', 'DIRECTOR'];
 const types = ['TITLE', ...peopleSearch];
 
-const build = (data) => {
+export const build = (data) => {
     const lang = data.lang || 'es';
     const type = data.type && (types.includes(data.type)) ? data.type : 'TITLE';
     const start = data.start || 0;
@@ -15,5 +15,3 @@ const build = (data) => {
 
     return `${Config.BASE_URL}/${lang}${Config.paths.SEARCH}${type.toLowerCase()}&stext=${encodeURIComponent(data.query)}&from=${start}${orderBy}`; 
 }
-
-module.exports = { build }

@@ -1,7 +1,5 @@
-const Config = require('../../config/config.json');
+import Config from '../../config/config.json' assert { type: "json" };
 
-const build = (data) => {
+export const build = (data) => {
     return `${Config.BASE_URL}/${data.lang}/film${data.id}.html`;
 }
-
-module.exports = { build }
