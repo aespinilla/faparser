@@ -1,13 +1,11 @@
-const filmParser = require('../parser/filmParser');
-const requestfa = require('../request/request');
-const urlBuilder = require('../urlBuilder/filmUrlBuilder');
+import { request } from "../request/request.js";
+import { filmUrlBuilder as urlBuilder } from "../urlBuilder/index.js";
+import { filmParser as parse } from "../parser/index.js";
 
-const fetchFilm = async (data) => {
-    const url = urlBuilder.build(data);
-    const result = await requestfa.requestSource(url);
+export const fetchFilm = async (data) => {
+    const url = urlBuilder(data);
+    const result = await request(url);
     result.lang = data.lang;
-    const film = filmParser.parse(result);
+    const film = parse(result);
     return { id: `${data.id}`, ...film }
 }
-
-module.exports = { fetchFilm }

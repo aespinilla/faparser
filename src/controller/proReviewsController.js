@@ -1,13 +1,11 @@
-const proReviewsParser = require('../parser/proReviewsParser');
-const requestfa = require('../request/request');
-const urlBuilder = require('../urlBuilder/proReviewsUrlBuilder');
+import { request } from "../request/request.js";
+import { proReviewsUrlBuilder as urlBuilder } from "../urlBuilder/index.js";
+import { proReviewsParser as parse } from "../parser/index.js";
 
-const fetchProReviews = async (data) => {
+export const fetchProReviews = async (data) => {
     data.type = 'PRO_REVIEWS';
-    const url = urlBuilder.build(data);
-    const response = await requestfa.requestSource(url);
-    const result = proReviewsParser.parse(response);
+    const url = urlBuilder(data);
+    const response = await request(url);
+    const result = parse(response);
     return result;
 }
-
-module.exports = { fetchProReviews }

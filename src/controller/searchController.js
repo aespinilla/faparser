@@ -1,16 +1,9 @@
-const url = require('url');
+import url from 'url';
+import { request } from "../request/request.js";
+import { searchUrlBuilder, genreUrlBuilder, topicUrlBuilder } from "../urlBuilder/index.js";
+import { filmParser, specialSearch, searchParser } from "../parser/index.js"; 
 
-const searchUrlBuilder = require('../urlBuilder/searchUrlBuilder');
-const genreUrlBuilder = require('../urlBuilder/genreUrlBuilder');
-const topicUrlBuilder = require('../urlBuilder/topicUrlBuilder');
-
-const requestfa = require('../request/request');
-
-const filmParser = require('../parser/filmParser');
-const specialSearchParser = require('../parser/specialSearch');
-const searchParser = require('../parser/searchParser');
-
-const search = async (data) => {
+export const search = async (data) => {
     if (data.type === 'TOPIC') {
         const result = await getTopics(data);
         result.lang = data.lang;
@@ -23,18 +16,18 @@ const search = async (data) => {
         return buildOutput(result, false);
     }
 
-    const url = searchUrlBuilder.build(data);
-    const response = await requestfa.requestSource(url);
+    const url = searchUrlBuilder(data);
+    const response = await request(url);
     response.lang = data.lang;
 
     if (isFilm(response.response.url)) {
         const id = getId(response.response.url);
-        const film = filmParser.parse(response);
+        const film = filmParser(response);
         const result = mapFilm(id, film);
         return buildOutput([result], false);
     }
 
-    const result = searchParser.parse(response);
+    const result = searchParser(response);
     return buildOutput(result.result, result.hasMore);
 }
 
@@ -49,18 +42,18 @@ const getId = (responseUrl) => {
 }
 
 const getTopics = async (data) => {
-    const url = topicUrlBuilder.build(data);
+    const url = topicUrlBuilder(data);
     return await getSpecialSearch(url);
 }
 
 const getGenres = async (data) => {
-    const url = genreUrlBuilder.build(data);
+    const url = genreUrlBuilder(data);
     return await getSpecialSearch(url);
 }
 
 const getSpecialSearch = async (url) => {
-    const response = await requestfa.requestSource(url);
-    const result = specialSearchParser.parse(response);
+    const response = await request(url);
+    const result = specialSearch(response);
     return result;
 }
 
@@ -86,5 +79,3 @@ const buildOutput = (result, hasMore) => {
         result: result
     }
 }
-
-module.exports = { search }

@@ -1,13 +1,11 @@
-const trailersParser = require('../parser/trailersParser');
-const requestfa = require('../request/request');
-const urlBuilder = require('../urlBuilder/trailersUrlBuilder');
+import { request } from "../request/request.js";
+import { trailersUrlBuilder as urlBuilder } from "../urlBuilder/index.js";
+import { trailersParser as parse } from "../parser/index.js";
 
-const fetchTrailers = async (data) => {
+export const fetchTrailers = async (data) => {
     data.type = 'TRAILERS';
-    const url = urlBuilder.build(data);
-    const response = await requestfa.requestSource(url);
-    const result = trailersParser.parse(response);
+    const url = urlBuilder(data);
+    const response = await request(url);
+    const result = parse(response);
     return result;
 }
-
-module.exports = { fetchTrailers }

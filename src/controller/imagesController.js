@@ -1,13 +1,11 @@
-const imagesParser = require('../parser/imagesParser');
-const requestfa = require('../request/request');
-const urlBuilder = require('../urlBuilder/imagesUrlBuilder');
+import { request } from "../request/request.js";
+import { imagesUrlBuilder as urlBuilder } from "../urlBuilder/index.js";
+import { imagesParser as parse } from "../parser/index.js";
 
-const fetchImages = async (data) => {
+export const fetchImages = async (data) => {
     data.type = 'IMAGES'
-    const url = urlBuilder.build(data);
-    const response = await requestfa.requestSource(url);
-    const result = imagesParser.parse(response);
+    const url = urlBuilder(data);
+    const response = await request(url);
+    const result = parse(response);
     return result;
 }
-
-module.exports = { fetchImages }
