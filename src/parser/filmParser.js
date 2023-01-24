@@ -1,4 +1,4 @@
-import Config from '../../config/config.json' assert { type: "json" };
+import { Config } from '../config/config.js';
 import jQuery from 'cheerio';
 import url from 'url';
 import { parseNumber } from '../utils.js';
@@ -272,7 +272,7 @@ const parseMovieInfo = (content, titles, lang) => {
                 info.genre = parseGenres(a, lang);
                 break
             }
-            case "synopsis / plot":
+            case "synopsis":
             case "sinopsis": {
                 info.synopsis = parseSypnosis(a);
                 break

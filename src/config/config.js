@@ -1,4 +1,4 @@
-{
+export const Config = {
     "BASE_URL": "https://www.filmaffinity.com",
     "paths": {
         "GENRE": "/moviegenre.php?genre=",
@@ -8,4 +8,4 @@
         "PRO_REVIEWS": "/pro-reviews.php?movie-id=",
         "SEARCH": "/search.php?stype="
     }
-}
+};

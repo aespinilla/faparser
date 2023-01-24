@@ -1,4 +1,4 @@
-import Config from '../../config/config.json' assert { type: "json" };
+import { Config } from '../config/config.js';
 
 const peopleSearch = ['CAST', 'DIRECTOR'];
 const types = ['TITLE', ...peopleSearch];

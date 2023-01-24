@@ -1,4 +1,4 @@
-import Config from '../../config/config.json' assert { type: "json" };
+import { Config } from '../config/config.js';
 import jQuery from 'cheerio';
 
 const BASE_URL = Config.BASE_URL;

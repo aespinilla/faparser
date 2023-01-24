@@ -15,7 +15,11 @@ describe('Request tests', () => {
     });
 
     it('should return failure response', async () => {
-        global.fetch = jest.fn().mockImplementationOnce(() => Promise.resolve({ ok: false, status: 500, statusText: 'some error' }));
+        global.fetch = jest.fn().mockImplementationOnce(() => Promise.resolve({ 
+            ok: false, 
+            status: 500, 
+            statusText: 'some error'
+        }));
         await expect(request('http://fake.address')).rejects.toThrow('some error');
         expect(fetch).toHaveBeenCalledTimes(1);
     })
