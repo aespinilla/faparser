@@ -1,4 +1,4 @@
-import { build as trailersUrlBuilder } from "../../src/urlBuilder/trailersUrlBuilder.js";
+import { trailersUrlBuilder } from "../../src/urlBuilder";
 
 describe('Build trailers url', () => {
     it('should return trailers url given lang', () => {

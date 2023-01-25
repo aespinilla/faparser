@@ -1,4 +1,4 @@
-import { build as filmUrlBuilder } from "../../src/urlBuilder/filmUrlBuilder.js";
+import { filmUrlBuilder } from "../../src/urlBuilder";
 
 describe('Build film url', () => {
     it('should return film url', async () => {

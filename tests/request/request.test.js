@@ -1,4 +1,4 @@
-import { request } from "../src/request/request.js";
+import { request } from "../../src/request/request.js";
 
 describe('Request tests', () => {
     it('should return successful response', async () => {

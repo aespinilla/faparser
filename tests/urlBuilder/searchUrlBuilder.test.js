@@ -1,4 +1,4 @@
-import { build as searchUrlBuilder } from "../../src/urlBuilder/searchUrlBuilder.js";
+import { searchUrlBuilder } from "../../src/urlBuilder";
 
 describe('Build search url', () => {
     it('should return search url with title', () => {

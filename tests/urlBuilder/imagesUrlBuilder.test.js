@@ -1,4 +1,4 @@
-import { build as imagesUrlBuilder } from "../../src/urlBuilder/imagesUrlBuilder.js";
+import { imagesUrlBuilder } from "../../src/urlBuilder";
 
 describe('Build images url', () => {
     it('should return images url given lang', () => {

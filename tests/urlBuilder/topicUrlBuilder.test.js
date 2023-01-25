@@ -1,4 +1,4 @@
-import { build as topicUrlBuilder } from "../../src/urlBuilder/topicUrlBuilder.js";
+import { topicUrlBuilder } from "../../src/urlBuilder";
 
 describe('Build trailers url', () => {
     it('should return topic url given lang', () => {

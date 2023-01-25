@@ -1,4 +1,4 @@
-import { build as genreUrlBuilder } from "../../src/urlBuilder/genreUrlBuilder.js";
+import { genreUrlBuilder } from "../../src/urlBuilder";
 
 describe('Build genre url', () => {
     it('should return genre url given lang', () => {

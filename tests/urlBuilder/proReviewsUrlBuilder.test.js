@@ -1,4 +1,4 @@
-import { build as proReviewsUrlBuilder } from "../../src/urlBuilder/proReviewsUrlBuilder.js";
+import { proReviewsUrlBuilder } from "../../src/urlBuilder";
 
 describe('Build pro review url', () => {
     it('should return pro reviews url given lang', async () => {
