@@ -1,4 +1,3 @@
-import { jest } from '@jest/globals';
 import { request } from "../src/request/request.js";
 
 describe('Request tests', () => {
