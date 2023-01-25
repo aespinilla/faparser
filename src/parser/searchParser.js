@@ -1,6 +1,6 @@
 import { Config } from '../config/config.js';
 import jQuery from 'cheerio';
-import { parseNumber } from '../utils.js';
+import { parseNumber } from '../utils/utils.js';
 
 const BASE_URL = Config.BASE_URL;
 
