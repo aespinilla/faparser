@@ -4,7 +4,7 @@ import * as filmUrlBuilderMock from "../../src/urlBuilder/filmUrlBuilder";
 import * as filmParserMock from "../../src/parser/filmParser";
 
 describe('Film controller tests', () => {
-    it('should return film object', async () => {
+    beforeEach(() => {
         requestMock.request = jest.fn().mockReturnValue(Promise.resolve({
             url: 'http://fake.address',
             response: {},
@@ -18,14 +18,15 @@ describe('Film controller tests', () => {
             title: 'random',
             url: 'http://fake.address'
         });
+    });
 
+    it('should return film object', async () => {
         const id = 'xx';
         const lang = 'es';
         const input = { id, lang }
         const output = await filmController(input);
 
         expect(output.url).toBe('http://fake.address');
-        // expect(output.body).toBe('result');
         expect(requestMock.request).toHaveBeenCalledTimes(1);
         expect(filmUrlBuilderMock.build).toHaveBeenCalledTimes(1);
         expect(filmParserMock.parse).toHaveBeenCalledTimes(1);
